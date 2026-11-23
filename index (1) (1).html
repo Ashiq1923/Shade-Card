@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Subhani Embroidery — Digital Shade Book & AI Contrast Studio</title>
+<style>
+  :root {
+    --bg: #0b0e14;
+    --panel: #131823;
+    --panel-2: #1a2130;
+    --border: #273145;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+    --accent-2: #f59e0b;
+    --success: #10b981;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+  header {
+    background: linear-gradient(135deg, #111827 0%, #0f172a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    backdrop-filter: blur(10px);
+  }
+  .header-top {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .brand h1 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand h1 span.badge {
+    font-size: 0.72rem;
+    background: rgba(56, 189, 248, 0.15);
+    color: var(--accent);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .brand p {
+    color: var(--muted);
+    font-size: 0.82rem;
+    margin-top: 2px;
+  }
+  .header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+  .btn {
+    border: 1px solid var(--border);
+    background: var(--panel-2);
+    color: var(--text);
+    padding: 9px 15px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .btn-ai {
+    background: linear-gradient(135deg, #0284c7, #6366f1);
+    border: none;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+  }
+  .btn-ai:hover { filter: brightness(1.1); }
+  .btn-export { font-size: 0.8rem; padding: 8px 12px; }
+
+  .container {
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 0 20px;
+  }
+
+  /* Search & Filter Bar */
+  .controls-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .search-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+  .search-input-wrap {
+    flex: 1;
+    min-width: 260px;
+    position: relative;
+  }
+  .search-input-wrap input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px 40px 12px 14px;
+    border-radius: 10px;
+    font-size: 0.96rem;
+    outline: none;
+  }
+  .search-input-wrap input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+  }
+  .clear-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: none;
+  }
+  select.filter-select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 11px 14px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    outline: none;
+    cursor: pointer;
+  }
+  .color-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .pill {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.15s;
+  }
+  .pill:hover, .pill.active {
+    background: var(--panel-2);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .pill .dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+  .stats-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  /* Shade Grid & Realistic Silk Thread Texture */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+    gap: 14px;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.16s ease, border-color 0.16s ease;
+    position: relative;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+  }
+  .thread-swatch {
+    height: 76px;
+    width: 100%;
+    position: relative;
+    /* Smooth glossy sheen without horizontal lines */
+    background-image: linear-gradient(135deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.04) 45%, rgba(0,0,0,0.18) 100%);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    cursor: pointer;
+  }
+  .edited-tag {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    background: rgba(16, 185, 129, 0.9);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 5px;
+  }
+  .edit-icon-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: rgba(11, 14, 20, 0.72);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 6px;
+    padding: 3px 7px;
+    font-size: 0.72rem;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+  }
+  .edit-icon-btn:hover { background: var(--accent); color: #000; }
+  .card-body {
+    padding: 10px 12px;
+  }
+  .shade-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .shade-num {
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #fff;
+  }
+  .shade-tone {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--panel-2);
+    color: var(--muted);
+  }
+  .shade-fam {
+    font-size: 0.82rem;
+    color: var(--accent);
+    font-weight: 600;
+    margin-top: 3px;
+  }
+  .shade-loc {
+    margin-top: 7px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.74rem;
+    color: var(--muted);
+  }
+
+  /* Modals (AI Contrast Studio & Shade Editor) */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(3, 7, 18, 0.82);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    overflow-y: auto;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 820px;
+    max-height: 92vh;
+    overflow-y: auto;
+    padding: 22px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+  }
+  .modal-header h2 { font-size: 1.2rem; }
+  .close-modal {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+
+  /* AI Contrast Studio Form */
+  .ai-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .field label {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .field input, .field select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 9px;
+    font-size: 0.92rem;
+  }
+  .mode-btns {
+    display: flex;
+    gap: 8px;
+  }
+  .mode-btn {
+    flex: 1;
+    padding: 9px 8px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 0.82rem;
+    cursor: pointer;
+    text-align: center;
+  }
+  .mode-btn.active {
+    background: rgba(56, 189, 248, 0.16);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .base-preview {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .base-swatch-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.25);
+    flex-shrink: 0;
+  }
+  .palette-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  .palette-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--accent-2);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .palette-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+  }
+  .p-item {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    overflow: hidden;
+    text-align: center;
+  }
+  .p-color {
+    height: 52px;
+    background-image: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(0,0,0,0.16) 100%);
+  }
+  .p-info {
+    padding: 7px 6px;
+    font-size: 0.78rem;
+  }
+  .p-info strong { display: block; font-size: 0.95rem; color: #fff; }
+  .p-info span { color: var(--muted); font-size: 0.72rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top" style="gap: 12px;">
+    <div class="brand" style="flex-shrink: 0;">
+      <h1>🧵 Subhani Shade Book <span class="badge">719</span></h1>
+    </div>
+    <div class="search-input-wrap" style="flex: 1; min-width: 200px;">
+      <input type="text" id="searchInput" placeholder="Search Shade # (3948) or Color (Green, Red, Gold...)" oninput="handleSearch()" />
+      <button class="clear-btn" id="clearSearchBtn" onclick="clearSearch()">✕</button>
+    </div>
+    <button class="btn btn-ai" id="toolsMenuBtn" onclick="openToolsModal()" style="flex-shrink: 0;">
+      ☰ Filters & AI <span id="activeFilterBadge" style="display:none; background:rgba(255,255,255,0.22); padding:1px 7px; border-radius:999px; font-size:0.74rem;">Active</span>
+    </button>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="stats-bar">
+    <div id="resultCount">Showing 719 shades</div>
+    <div>Tip: Click <strong>Edit</strong> on any thread card to fine-tune & save its exact color</div>
+  </div>
+
+  <div class="grid" id="shadeGrid"></div>
+</div>
+
+<!-- FILTERS, AI & BACKUP POPUP MODAL -->
+<div class="modal-backdrop" id="toolsModal" onclick="if(event.target===this) closeModal('toolsModal')">
+  <div class="modal" style="max-width: 680px;">
+    <div class="modal-header">
+      <h2>⚙️ Filters, AI Contrast & Tools</h2>
+      <button class="close-modal" onclick="closeModal('toolsModal')">✕</button>
+    </div>
+
+    <div style="margin-bottom: 18px;">
+      <div style="font-size:0.82rem; color:var(--muted); font-weight:600; margin-bottom:8px;">✨ AI Thread Matching</div>
+      <button class="btn btn-ai" style="width:100%; justify-content:center; padding:12px; font-size:0.95rem;" onclick="closeModal('toolsModal'); openContrastModal();">
+        ✨ Open Match Contrast (AI) Studio
+      </button>
+    </div>
+
+    <div style="margin-bottom: 18px; padding-top: 14px; border-top: 1px solid var(--border);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <span style="font-size:0.85rem; color:var(--text); font-weight:700;">🎨 Filter by Color Family</span>
+        <button class="btn" style="padding:4px 10px; font-size:0.76rem;" onclick="resetAllFilters()">Reset All Filters</button>
+      </div>
+      <div class="color-pills" id="colorPills" style="margin-top:0; padding-top:0; border-top:none;"></div>
+    </div>
+
+    <div class="ai-grid" style="margin-bottom: 18px; padding-top: 14px; border-top: 1px solid var(--border);">
+      <div class="field">
+        <label>Filter by Tone (Light / Medium / Dark)</label>
+        <select id="toneFilter" class="filter-select" style="width:100%;" onchange="renderGrid()">
+          <option value="ALL">All Tones (Light / Med / Dark)</option>
+          <option value="Light">Light Shades Only</option>
+          <option value="Medium">Medium Shades Only</option>
+          <option value="Dark">Dark Shades Only</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Filter by Shade Card Strip (1 – 30)</label>
+        <select id="stripFilter" class="filter-select" style="width:100%;" onchange="renderGrid()">
+          <option value="ALL">All Strips (1 – 30)</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="padding-top: 14px; border-top: 1px solid var(--border);">
+      <div style="font-size:0.82rem; color:var(--muted); font-weight:600; margin-bottom:8px;">💾 Shade Edits Backup & Restore</div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn btn-export" style="flex:1; justify-content:center;" onclick="exportEdits()">💾 Backup Edited Shades</button>
+        <label class="btn btn-export" style="flex:1; justify-content:center; cursor:pointer;">
+          📂 Restore Backup <input type="file" accept=".json" onchange="importEdits(event)" style="display:none" />
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI MATCH CONTRAST MODAL -->
+<div class="modal-backdrop" id="contrastModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>✨ AI Thread Contrast & Combination Studio</h2>
+      <button class="close-modal" onclick="closeModal('contrastModal')">✕</button>
+    </div>
+
+    <div class="ai-grid">
+      <div class="field">
+        <label>1. Base Thread (Shade Number or Color Name)</label>
+        <input type="text" id="aiBaseInput" placeholder="e.g. 3001 or White or 3184 or Green" oninput="updateBasePreview()" />
+      </div>
+      <div class="field">
+        <label>2. How many types you need for this contrast?</label>
+        <select id="aiCountSelect">
+          <option value="2">2 Threads (Base + 1 Contrast)</option>
+          <option value="3">3 Threads (Base + 2 Contrasts)</option>
+          <option value="4" selected>4 Threads (Base + 3 Contrasts)</option>
+          <option value="5">5 Threads (Base + 4 Contrasts)</option>
+          <option value="6">6 Threads (Base + 5 Contrasts)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field" style="margin-bottom: 14px;">
+      <label>3. Select Contrast Style (For Light / For Dark / For Medium)</label>
+      <div class="mode-btns">
+        <button type="button" class="mode-btn active" data-mode="Light" onclick="setAiMode('Light', this)">☀️ For Light (Soft & Bright Contrast)</button>
+        <button type="button" class="mode-btn" data-mode="Dark" onclick="setAiMode('Dark', this)">🌑 For Dark (Rich & Deep Contrast)</button>
+        <button type="button" class="mode-btn" data-mode="Medium" onclick="setAiMode('Medium', this)">⚖️ For Medium (Balanced Multi-Tone)</button>
+      </div>
+    </div>
+
+    <div class="field" style="margin-bottom: 14px;">
+      <label>4. Optional: Preferred Colors to Include (comma separated, or leave blank for full AI suggestion)</label>
+      <input type="text" id="aiPrefColors" placeholder="e.g. Gold, Green, Yellow, Brown (or leave empty for automatic AI picks)" />
+    </div>
+
+    <div class="base-preview" id="basePreviewBox">
+      <div class="base-swatch-circle" id="baseCircle" style="background:#c8c4b9"></div>
+      <div>
+        <strong id="baseTitle">Base Thread: #3001 (White • Light)</strong>
+        <div style="font-size:0.8rem; color:var(--muted);" id="baseSub">Strip 1 • Row 1 — Type any shade number or color name above</div>
+      </div>
+    </div>
+
+    <button class="btn btn-ai" style="width:100%; justify-content:center; padding:12px; font-size:0.96rem; margin-bottom:18px;" onclick="generateContrastSuggestions()">
+      ✨ Generate AI Contrast Combinations
+    </button>
+
+    <div id="aiResultsArea"></div>
+  </div>
+</div>
+
+<!-- EDIT SHADE MODAL -->
+<div class="modal-backdrop" id="editModal">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-header">
+      <h2>🎨 Edit & Save Thread Shade</h2>
+      <button class="close-modal" onclick="closeModal('editModal')">✕</button>
+    </div>
+    <p style="font-size:0.84rem; color:var(--muted); margin-bottom:14px;">
+      Adjust the color, family name, or tone for Shade <strong id="editShadeLabel" style="color:#fff;"></strong>. Changes are saved automatically in your browser.
+    </p>
+    <div class="field" style="margin-bottom:12px;">
+      <label>Pick Exact Thread Color</label>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <input type="color" id="editColorPicker" style="width:70px; height:44px; padding:2px; cursor:pointer;" oninput="document.getElementById('editHexText').value = this.value" />
+        <input type="text" id="editHexText" placeholder="#aabbcc" oninput="if(/^#[0-9A-Fa-f]{6}$/.test(this.value)) document.getElementById('editColorPicker').value = this.value;" />
+      </div>
+    </div>
+    <div class="ai-grid" style="margin-bottom:14px;">
+      <div class="field">
+        <label>Color Family Name</label>
+        <select id="editFamSelect">
+          <option>White</option><option>Cream</option><option>Yellow</option><option>Gold</option>
+          <option>Orange</option><option>Red</option><option>Pink</option><option>Purple</option>
+          <option>Blue</option><option>Teal</option><option>Green</option><option>Brown</option>
+          <option>Grey</option><option>Black</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Shade Tone</label>
+        <select id="editToneSelect">
+          <option>Light</option><option>Medium</option><option>Dark</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-ai" style="flex:1; justify-content:center;" onclick="saveShadeEdit()">💾 Save Shade</button>
+      <button class="btn" onclick="resetSingleShade()">↺ Reset Original</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const RAW_SHADES = [{"s":4,"n":"3001","st":1,"rw":1,"hex":"#c9c5ba","rgb":[201,197,186],"fam":"White","tone":"Light","h":44.0,"sat":7.5,"lum":76.8},{"s":7,"n":"3005","st":1,"rw":2,"hex":"#d0ccc2","rgb":[208,204,194],"fam":"White","tone":"Light","h":41.5,"sat":6.3,"lum":79.3},{"s":498,"n":"3950","st":1,"rw":3,"hex":"#dcd8cd","rgb":[220,216,205],"fam":"White","tone":"Light","h":44.0,"sat":6.9,"lum":83.9},{"s":6,"n":"3003","st":1,"rw":4,"hex":"#d5d1c5","rgb":[213,209,197],"fam":"White","tone":"Light","h":45.0,"sat":7.6,"lum":81.1},{"s":5,"n":"3002","st":1,"rw":5,"hex":"#dad6ca","rgb":[218,214,202],"fam":"White","tone":"Light","h":45.0,"sat":7.4,"lum":83.1},{"s":370,"n":"3662","st":1,"rw":6,"hex":"#dbd5c7","rgb":[219,213,199],"fam":"White","tone":"Light","h":42.0,"sat":9.2,"lum":82.8},{"s":684,"n":"4542","st":1,"rw":7,"hex":"#dbd4c5","rgb":[219,212,197],"fam":"White","tone":"Light","h":40.9,"sat":10.1,"lum":82.5},{"s":365,"n":"3642","st":1,"rw":8,"hex":"#dfd8c6","rgb":[223,216,198],"fam":"White","tone":"Light","h":43.2,"sat":11.3,"lum":83.9},{"s":336,"n":"3550","st":1,"rw":9,"hex":"#d5d0bc","rgb":[213,208,188],"fam":"White","tone":"Light","h":48.0,"sat":11.8,"lum":80.5},{"s":65,"n":"3071","st":1,"rw":10,"hex":"#d6ceb2","rgb":[214,206,178],"fam":"Cream","tone":"Light","h":46.5,"sat":14.6,"lum":80.1},{"s":56,"n":"3061","st":1,"rw":11,"hex":"#d9d4b7","rgb":[217,212,183],"fam":"White","tone":"Light","h":52.0,"sat":14.0,"lum":82.1},{"s":61,"n":"3067","st":1,"rw":12,"hex":"#d4cdb0","rgb":[212,205,176],"fam":"Cream","tone":"Light","h":48.4,"sat":14.8,"lum":79.6},{"s":502,"n":"4010","st":1,"rw":13,"hex":"#d8d3b7","rgb":[216,211,183],"fam":"White","tone":"Light","h":51.7,"sat":13.6,"lum":81.7},{"s":13,"n":"3013","st":1,"rw":14,"hex":"#d6d4bf","rgb":[214,212,191],"fam":"White","tone":"Light","h":54.8,"sat":10.8,"lum":81.6},{"s":301,"n":"3448","st":1,"rw":15,"hex":"#d0cdb9","rgb":[208,205,185],"fam":"White","tone":"Light","h":51.8,"sat":10.7,"lum":79.1},{"s":1,"n":"2071","st":1,"rw":16,"hex":"#cdc5b0","rgb":[205,197,176],"fam":"White","tone":"Light","h":43.8,"sat":12.7,"lum":77.2},{"s":121,"n":"3149","st":1,"rw":17,"hex":"#d3c5a8","rgb":[211,197,168],"fam":"Cream","tone":"Light","h":40.5,"sat":17.7,"lum":77.5},{"s":613,"n":"4309","st":1,"rw":18,"hex":"#cec2a2","rgb":[206,194,162],"fam":"Cream","tone":"Light","h":43.1,"sat":19.0,"lum":76.1},{"s":403,"n":"3743","st":1,"rw":19,"hex":"#ccc1a1","rgb":[204,193,161],"fam":"Cream","tone":"Light","h":44.2,"sat":18.7,"lum":75.6},{"s":99,"n":"3123","st":1,"rw":20,"hex":"#c9c1a3","rgb":[201,193,163],"fam":"Cream","tone":"Light","h":47.3,"sat":16.5,"lum":75.3},{"s":522,"n":"4067","st":1,"rw":21,"hex":"#beb081","rgb":[190,176,129],"fam":"Gold","tone":"Light","h":46.4,"sat":28.0,"lum":69.0},{"s":479,"n":"3918","st":1,"rw":22,"hex":"#c0b479","rgb":[192,180,121],"fam":"Gold","tone":"Light","h":50.3,"sat":32.5,"lum":69.8},{"s":436,"n":"3805","st":1,"rw":23,"hex":"#c8b986","rgb":[200,185,134],"fam":"Cream","tone":"Light","h":46.6,"sat":29.1,"lum":72.5},{"s":307,"n":"3455","st":1,"rw":24,"hex":"#bbad7b","rgb":[187,173,123],"fam":"Gold","tone":"Light","h":46.1,"sat":29.9,"lum":67.8},{"s":503,"n":"4011","st":2,"rw":1,"hex":"#beb872","rgb":[190,184,114],"fam":"Gold","tone":"Light","h":55.5,"sat":34.9,"lum":70.0},{"s":533,"n":"4091","st":2,"rw":2,"hex":"#baba6d","rgb":[186,186,109],"fam":"Gold","tone":"Light","h":60.0,"sat":36.6,"lum":69.9},{"s":109,"n":"3135","st":2,"rw":3,"hex":"#bfb445","rgb":[191,180,69],"fam":"Yellow","tone":"Light","h":54.9,"sat":55.8,"lum":67.7},{"s":323,"n":"3488","st":2,"rw":4,"hex":"#b9b243","rgb":[185,178,67],"fam":"Yellow","tone":"Light","h":56.5,"sat":56.2,"lum":66.5},{"s":21,"n":"3023","st":2,"rw":5,"hex":"#c1b83b","rgb":[193,184,59],"fam":"Yellow","tone":"Light","h":55.9,"sat":60.9,"lum":68.2},{"s":504,"n":"4012","st":2,"rw":6,"hex":"#c4bb2e","rgb":[196,187,46],"fam":"Yellow","tone":"Light","h":56.3,"sat":67.2,"lum":68.8},{"s":505,"n":"4013","st":2,"rw":7,"hex":"#beb31c","rgb":[190,179,28],"fam":"Yellow","tone":"Medium","h":56.2,"sat":74.6,"lum":65.7},{"s":145,"n":"3180","st":2,"rw":8,"hex":"#beb22f","rgb":[190,178,47],"fam":"Yellow","tone":"Light","h":55.2,"sat":66.1,"lum":66.2},{"s":506,"n":"4014","st":2,"rw":9,"hex":"#c9bb1d","rgb":[201,187,29],"fam":"Yellow","tone":"Light","h":55.2,"sat":75.0,"lum":69.0},{"s":100,"n":"3124","st":2,"rw":10,"hex":"#cbba28","rgb":[203,186,40],"fam":"Yellow","tone":"Light","h":53.7,"sat":70.3,"lum":69.4},{"s":158,"n":"3223","st":2,"rw":11,"hex":"#c3bc17","rgb":[195,188,23],"fam":"Yellow","tone":"Light","h":57.6,"sat":77.3,"lum":68.0},{"s":59,"n":"3064","st":2,"rw":12,"hex":"#c2b10c","rgb":[194,177,12],"fam":"Yellow","tone":"Medium","h":54.3,"sat":82.4,"lum":65.1},{"s":23,"n":"3026","st":2,"rw":13,"hex":"#bfb18f","rgb":[191,177,143],"fam":"Gold","tone":"Light","h":42.9,"sat":22.1,"lum":69.9},{"s":361,"n":"3634","st":2,"rw":14,"hex":"#aea686","rgb":[174,166,134],"fam":"Gold","tone":"Medium","h":48.0,"sat":20.1,"lum":65.1},{"s":64,"n":"3070","st":2,"rw":15,"hex":"#b29b52","rgb":[178,155,82],"fam":"Gold","tone":"Medium","h":45.7,"sat":47.2,"lum":61.4},{"s":546,"n":"4125","st":2,"rw":16,"hex":"#b0975a","rgb":[176,151,90],"fam":"Gold","tone":"Medium","h":42.4,"sat":42.6,"lum":60.6},{"s":390,"n":"3719","st":2,"rw":17,"hex":"#b89757","rgb":[184,151,87],"fam":"Gold","tone":"Medium","h":39.5,"sat":46.2,"lum":61.7},{"s":645,"n":"4398","st":2,"rw":18,"hex":"#b69547","rgb":[182,149,71],"fam":"Gold","tone":"Medium","h":42.1,"sat":53.3,"lum":60.4},{"s":605,"n":"4289","st":2,"rw":19,"hex":"#b29249","rgb":[178,146,73],"fam":"Gold","tone":"Medium","h":41.7,"sat":51.7,"lum":59.2},{"s":455,"n":"3868","st":2,"rw":20,"hex":"#a4792b","rgb":[164,121,43],"fam":"Gold","tone":"Medium","h":38.7,"sat":64.8,"lum":51.2},{"s":262,"n":"3406","st":2,"rw":21,"hex":"#b69344","rgb":[182,147,68],"fam":"Gold","tone":"Medium","h":41.4,"sat":54.9,"lum":59.8},{"s":604,"n":"4288","st":2,"rw":22,"hex":"#a87c3b","rgb":[168,124,59],"fam":"Orange","tone":"Medium","h":35.6,"sat":56.8,"lum":53.0},{"s":524,"n":"4070","st":2,"rw":23,"hex":"#9f6f2a","rgb":[159,111,42],"fam":"Orange","tone":"Medium","h":35.5,"sat":64.4,"lum":48.5},{"s":432,"n":"3795","st":2,"rw":24,"hex":"#946c38","rgb":[148,108,56],"fam":"Orange","tone":"Medium","h":33.7,"sat":54.7,"lum":46.9},{"s":440,"n":"3809","st":3,"rw":1,"hex":"#ad5824","rgb":[173,88,36],"fam":"Brown","tone":"Medium","h":23.0,"sat":69.4,"lum":45.4},{"s":438,"n":"3807","st":3,"rw":2,"hex":"#bf992f","rgb":[191,153,47],"fam":"Gold","tone":"Medium","h":44.3,"sat":66.3,"lum":61.3},{"s":332,"n":"3526","st":3,"rw":3,"hex":"#bea138","rgb":[190,161,56],"fam":"Yellow","tone":"Medium","h":47.2,"sat":61.9,"lum":63.1},{"s":137,"n":"3171","st":3,"rw":4,"hex":"#c39b24","rgb":[195,155,36],"fam":"Gold","tone":"Medium","h":44.9,"sat":71.6,"lum":61.8},{"s":507,"n":"4015","st":3,"rw":5,"hex":"#c19613","rgb":[193,150,19],"fam":"Gold","tone":"Medium","h":45.4,"sat":79.2,"lum":60.0},{"s":101,"n":"3125","st":3,"rw":6,"hex":"#c59513","rgb":[197,149,19],"fam":"Gold","tone":"Medium","h":43.7,"sat":79.1,"lum":60.3},{"s":405,"n":"3747","st":3,"rw":7,"hex":"#c79314","rgb":[199,147,20],"fam":"Gold","tone":"Medium","h":42.7,"sat":78.8,"lum":60.3},{"s":62,"n":"3068","st":3,"rw":8,"hex":"#c49515","rgb":[196,149,21],"fam":"Gold","tone":"Medium","h":43.9,"sat":78.5,"lum":60.2},{"s":508,"n":"4016","st":3,"rw":9,"hex":"#c88b14","rgb":[200,139,20],"fam":"Gold","tone":"Medium","h":39.7,"sat":78.9,"lum":58.8},{"s":420,"n":"3772","st":3,"rw":10,"hex":"#b98a33","rgb":[185,138,51],"fam":"Gold","tone":"Medium","h":39.2,"sat":63.8,"lum":57.8},{"s":347,"n":"3603","st":3,"rw":11,"hex":"#a86218","rgb":[168,98,24],"fam":"Orange","tone":"Medium","h":30.7,"sat":75.1,"lum":46.3},{"s":22,"n":"3025","st":3,"rw":12,"hex":"#af751b","rgb":[175,117,27],"fam":"Orange","tone":"Medium","h":36.5,"sat":74.3,"lum":51.1},{"s":699,"n":"4573","st":3,"rw":13,"hex":"#af651c","rgb":[175,101,28],"fam":"Orange","tone":"Medium","h":29.8,"sat":73.7,"lum":47.9},{"s":366,"n":"3648","st":3,"rw":14,"hex":"#ac622a","rgb":[172,98,42],"fam":"Orange","tone":"Medium","h":25.8,"sat":66.3,"lum":47.4},{"s":60,"n":"3065","st":3,"rw":15,"hex":"#ba6206","rgb":[186,98,6],"fam":"Orange","tone":"Medium","h":30.8,"sat":84.9,"lum":48.2},{"s":111,"n":"3137","st":3,"rw":16,"hex":"#b15810","rgb":[177,88,16],"fam":"Brown","tone":"Medium","h":26.8,"sat":79.7,"lum":45.2},{"s":525,"n":"4071","st":3,"rw":17,"hex":"#976021","rgb":[151,96,33],"fam":"Brown","tone":"Medium","h":32.0,"sat":68.6,"lum":44.0},{"s":707,"n":"4586","st":3,"rw":18,"hex":"#995b24","rgb":[153,91,36],"fam":"Brown","tone":"Medium","h":28.3,"sat":67.1,"lum":43.5},{"s":551,"n":"4136","st":3,"rw":19,"hex":"#94400f","rgb":[148,64,15],"fam":"Brown","tone":"Medium","h":21.9,"sat":78.7,"lum":36.3},{"s":523,"n":"4069","st":3,"rw":20,"hex":"#a1833b","rgb":[161,131,59],"fam":"Gold","tone":"Medium","h":42.7,"sat":55.6,"lum":53.5},{"s":571,"n":"4199","st":3,"rw":21,"hex":"#936c17","rgb":[147,108,23],"fam":"Gold","tone":"Medium","h":40.9,"sat":73.8,"lum":45.5},{"s":129,"n":"3159","st":3,"rw":22,"hex":"#a19478","rgb":[161,148,120],"fam":"Gold","tone":"Medium","h":41.7,"sat":22.2,"lum":59.4},{"s":222,"n":"3350","st":3,"rw":23,"hex":"#a19375","rgb":[161,147,117],"fam":"Gold","tone":"Medium","h":41.5,"sat":24.1,"lum":59.0},{"s":223,"n":"3352","st":3,"rw":24,"hex":"#aea58f","rgb":[174,165,143],"fam":"Gold","tone":"Medium","h":42.2,"sat":15.5,"lum":65.2},{"s":155,"n":"3192","st":4,"rw":1,"hex":"#ad783d","rgb":[173,120,61],"fam":"Orange","tone":"Medium","h":31.8,"sat":56.6,"lum":52.9},{"s":159,"n":"3225","st":4,"rw":2,"hex":"#c38f41","rgb":[195,143,65],"fam":"Orange","tone":"Medium","h":36.1,"sat":58.2,"lum":60.7},{"s":227,"n":"3359","st":4,"rw":3,"hex":"#cdae8a","rgb":[205,174,138],"fam":"Cream","tone":"Light","h":32.5,"sat":28.9,"lum":71.1},{"s":593,"n":"4249","st":4,"rw":4,"hex":"#bca978","rgb":[188,169,120],"fam":"Gold","tone":"Light","h":43.0,"sat":31.9,"lum":67.1},{"s":154,"n":"3191","st":4,"rw":5,"hex":"#a68b47","rgb":[166,139,71],"fam":"Gold","tone":"Medium","h":42.9,"sat":50.3,"lum":56.2},{"s":574,"n":"4207","st":4,"rw":6,"hex":"#95783a","rgb":[149,120,58],"fam":"Gold","tone":"Medium","h":40.7,"sat":53.6,"lum":49.6},{"s":514,"n":"4038","st":4,"rw":7,"hex":"#90814a","rgb":[144,129,74],"fam":"Gold","tone":"Medium","h":47.4,"sat":42.5,"lum":51.5},{"s":153,"n":"3190","st":4,"rw":8,"hex":"#a79c3a","rgb":[167,156,58],"fam":"Gold","tone":"Medium","h":53.8,"sat":57.1,"lum":59.3},{"s":218,"n":"3340","st":4,"rw":9,"hex":"#9c8a3c","rgb":[156,138,60],"fam":"Gold","tone":"Medium","h":48.7,"sat":54.1,"lum":54.1},{"s":48,"n":"3053","st":4,"rw":10,"hex":"#8f813c","rgb":[143,129,60],"fam":"Gold","tone":"Medium","h":50.3,"sat":51.0,"lum":50.8},{"s":701,"n":"4576","st":4,"rw":11,"hex":"#ccc0ad","rgb":[204,192,173],"fam":"Cream","tone":"Light","h":35.6,"sat":13.3,"lum":75.9},{"s":568,"n":"4195","st":4,"rw":12,"hex":"#cab49a","rgb":[202,180,154],"fam":"Cream","tone":"Light","h":32.9,"sat":20.9,"lum":72.6},{"s":9,"n":"3009","st":4,"rw":13,"hex":"#dcbea4","rgb":[220,190,164],"fam":"Cream","tone":"Light","h":28.2,"sat":22.5,"lum":77.3},{"s":475,"n":"3912","st":4,"rw":14,"hex":"#d3b99e","rgb":[211,185,158],"fam":"Cream","tone":"Light","h":31.3,"sat":22.0,"lum":74.8},{"s":562,"n":"4175","st":4,"rw":15,"hex":"#c8ab95","rgb":[200,171,149],"fam":"Cream","tone":"Light","h":26.7,"sat":22.6,"lum":70.3},{"s":423,"n":"3779","st":4,"rw":16,"hex":"#cbb38c","rgb":[203,179,140],"fam":"Cream","tone":"Light","h":37.1,"sat":27.2,"lum":71.9},{"s":382,"n":"3706","st":4,"rw":17,"hex":"#b5ab7a","rgb":[181,171,122],"fam":"Gold","tone":"Light","h":49.6,"sat":28.7,"lum":66.6},{"s":160,"n":"3226","st":4,"rw":18,"hex":"#c6a874","rgb":[198,168,116],"fam":"Gold","tone":"Light","h":38.3,"sat":36.5,"lum":68.1},{"s":402,"n":"3742","st":4,"rw":19,"hex":"#d0a87e","rgb":[208,168,126],"fam":"Cream","tone":"Light","h":31.3,"sat":34.5,"lum":69.8},{"s":303,"n":"3450","st":4,"rw":20,"hex":"#c9a67e","rgb":[201,166,126],"fam":"Cream","tone":"Light","h":31.8,"sat":33.0,"lum":68.3},{"s":125,"n":"3155","st":4,"rw":21,"hex":"#cb916d","rgb":[203,145,109],"fam":"Brown","tone":"Medium","h":22.7,"sat":40.6,"lum":63.8},{"s":318,"n":"3476","st":4,"rw":22,"hex":"#d49961","rgb":[212,153,97],"fam":"Orange","tone":"Light","h":29.4,"sat":47.6,"lum":66.1},{"s":552,"n":"4137","st":4,"rw":23,"hex":"#cc7726","rgb":[204,119,38],"fam":"Orange","tone":"Medium","h":29.4,"sat":71.4,"lum":56.1},{"s":454,"n":"3867","st":4,"rw":24,"hex":"#ca793c","rgb":[202,121,60],"fam":"Orange","tone":"Medium","h":25.6,"sat":61.7,"lum":56.9},{"s":387,"n":"3716","st":5,"rw":1,"hex":"#dc9775","rgb":[220,151,117],"fam":"Brown","tone":"Light","h":20.0,"sat":41.3,"lum":67.7},{"s":383,"n":"3710","st":5,"rw":2,"hex":"#d9d4cd","rgb":[217,212,205],"fam":"White","tone":"Light","h":35.0,"sat":5.6,"lum":82.6},{"s":185,"n":"3278","st":5,"rw":3,"hex":"#c16f5f","rgb":[193,111,95],"fam":"Red","tone":"Medium","h":9.9,"sat":44.3,"lum":55.2},{"s":398,"n":"3736","st":5,"rw":4,"hex":"#d05829","rgb":[208,88,41],"fam":"Orange","tone":"Medium","h":17.0,"sat":70.4,"lum":50.4},{"s":395,"n":"3726","st":5,"rw":5,"hex":"#c4483c","rgb":[196,72,60],"fam":"Red","tone":"Medium","h":5.5,"sat":61.0,"lum":46.3},{"s":69,"n":"3078","st":5,"rw":6,"hex":"#ba3836","rgb":[186,56,54],"fam":"Red","tone":"Medium","h":1.0,"sat":62.4,"lum":41.5},{"s":237,"n":"3378","st":5,"rw":7,"hex":"#c94327","rgb":[201,67,39],"fam":"Red","tone":"Medium","h":10.2,"sat":70.5,"lum":45.2},{"s":34,"n":"3037","st":5,"rw":8,"hex":"#c93922","rgb":[201,57,34],"fam":"Red","tone":"Medium","h":8.2,"sat":73.0,"lum":42.9},{"s":144,"n":"3179","st":5,"rw":9,"hex":"#b82d33","rgb":[184,45,51],"fam":"Red","tone":"Medium","h":357.5,"sat":66.3,"lum":38.8},{"s":267,"n":"3411","st":5,"rw":10,"hex":"#aa4342","rgb":[170,67,66],"fam":"Red","tone":"Medium","h":0.7,"sat":53.8,"lum":42.0},{"s":16,"n":"3017","st":5,"rw":11,"hex":"#9e3333","rgb":[158,51,51],"fam":"Red","tone":"Medium","h":0.0,"sat":59.1,"lum":36.5},{"s":14,"n":"3014","st":5,"rw":12,"hex":"#bab1a8","rgb":[186,177,168],"fam":"Grey","tone":"Light","h":30.0,"sat":9.7,"lum":70.1},{"s":17,"n":"3018","st":5,"rw":13,"hex":"#cabfb9","rgb":[202,191,185],"fam":"Grey","tone":"Light","h":21.2,"sat":8.5,"lum":75.5},{"s":18,"n":"3019","st":5,"rw":14,"hex":"#cec2b9","rgb":[206,194,185],"fam":"White","tone":"Light","h":25.7,"sat":10.2,"lum":76.7},{"s":178,"n":"3254","st":5,"rw":15,"hex":"#ccafa2","rgb":[204,175,162],"fam":"Cream","tone":"Light","h":17.8,"sat":18.2,"lum":72.0},{"s":393,"n":"3722","st":5,"rw":16,"hex":"#c59487","rgb":[197,148,135],"fam":"Pink","tone":"Medium","h":12.2,"sat":27.6,"lum":64.6},{"s":123,"n":"3152","st":5,"rw":17,"hex":"#cb9a88","rgb":[203,154,136],"fam":"Cream","tone":"Light","h":16.3,"sat":29.2,"lum":66.7},{"s":19,"n":"3020","st":5,"rw":18,"hex":"#c97e61","rgb":[201,126,97],"fam":"Orange","tone":"Medium","h":16.5,"sat":45.5,"lum":59.2},{"s":491,"n":"3936","st":5,"rw":19,"hex":"#bb6867","rgb":[187,104,103],"fam":"Red","tone":"Medium","h":0.8,"sat":39.6,"lum":53.2},{"s":460,"n":"3874","st":5,"rw":20,"hex":"#bb5d5b","rgb":[187,93,91],"fam":"Red","tone":"Medium","h":0.7,"sat":44.9,"lum":50.5},{"s":392,"n":"3721","st":5,"rw":21,"hex":"#be7455","rgb":[190,116,85],"fam":"Orange","tone":"Medium","h":17.8,"sat":48.1,"lum":55.3},{"s":564,"n":"4186","st":5,"rw":22,"hex":"#b97968","rgb":[185,121,104],"fam":"Red","tone":"Medium","h":12.7,"sat":38.4,"lum":56.5},{"s":517,"n":"4051","st":5,"rw":23,"hex":"#b16256","rgb":[177,98,86],"fam":"Red","tone":"Medium","h":8.3,"sat":45.2,"lum":50.0},{"s":598,"n":"4272","st":5,"rw":24,"hex":"#a65a51","rgb":[166,90,81],"fam":"Red","tone":"Medium","h":6.4,"sat":44.9,"lum":46.7},{"s":526,"n":"4075","st":6,"rw":1,"hex":"#c36a48","rgb":[195,106,72],"fam":"Orange","tone":"Medium","h":16.3,"sat":55.2,"lum":53.3},{"s":427,"n":"3790","st":6,"rw":2,"hex":"#c96458","rgb":[201,100,88],"fam":"Red","tone":"Medium","h":6.7,"sat":49.5,"lum":53.7},{"s":265,"n":"3409","st":6,"rw":3,"hex":"#c55c5d","rgb":[197,92,93],"fam":"Red","tone":"Medium","h":359.3,"sat":46.9,"lum":51.6},{"s":143,"n":"3178","st":6,"rw":4,"hex":"#dc8268","rgb":[220,130,104],"fam":"Red","tone":"Medium","h":13.7,"sat":46.3,"lum":63.0},{"s":157,"n":"3221","st":6,"rw":5,"hex":"#dbd6d0","rgb":[219,214,208],"fam":"White","tone":"Light","h":32.7,"sat":5.1,"lum":83.5},{"s":317,"n":"3473","st":6,"rw":6,"hex":"#97534b","rgb":[151,83,75],"fam":"Red","tone":"Medium","h":6.2,"sat":44.4,"lum":42.9},{"s":647,"n":"4413","st":6,"rw":7,"hex":"#ba604d","rgb":[186,96,77],"fam":"Red","tone":"Medium","h":10.6,"sat":51.6,"lum":50.5},{"s":499,"n":"3956","st":6,"rw":8,"hex":"#b34429","rgb":[179,68,41],"fam":"Red","tone":"Medium","h":11.9,"sat":67.6,"lum":42.5},{"s":397,"n":"3733","st":6,"rw":9,"hex":"#b84633","rgb":[184,70,51],"fam":"Red","tone":"Medium","h":8.7,"sat":63.6,"lum":43.9},{"s":543,"n":"4118","st":6,"rw":10,"hex":"#b75b60","rgb":[183,91,96],"fam":"Red","tone":"Medium","h":356.3,"sat":44.3,"lum":49.7},{"s":316,"n":"3472","st":6,"rw":11,"hex":"#b72d3c","rgb":[183,45,60],"fam":"Red","tone":"Medium","h":353.6,"sat":66.1,"lum":39.1},{"s":270,"n":"3414","st":6,"rw":12,"hex":"#a91a28","rgb":[169,26,40],"fam":"Red","tone":"Dark","h":354.3,"sat":74.1,"lum":32.6},{"s":119,"n":"3147","st":6,"rw":13,"hex":"#a31822","rgb":[163,24,34],"fam":"Red","tone":"Dark","h":355.6,"sat":75.0,"lum":30.9},{"s":428,"n":"3791","st":6,"rw":14,"hex":"#9c1027","rgb":[156,16,39],"fam":"Red","tone":"Dark","h":349.8,"sat":79.0,"lum":28.4},{"s":54,"n":"3059","st":6,"rw":15,"hex":"#a61a29","rgb":[166,26,41],"fam":"Red","tone":"Dark","h":353.2,"sat":74.3,"lum":32.0},{"s":452,"n":"3863","st":6,"rw":16,"hex":"#9b0d24","rgb":[155,13,36],"fam":"Red","tone":"Dark","h":350.4,"sat":80.1,"lum":27.7},{"s":608,"n":"4301","st":6,"rw":17,"hex":"#a00d21","rgb":[160,13,33],"fam":"Red","tone":"Dark","h":351.7,"sat":80.7,"lum":28.2},{"s":408,"n":"3751","st":6,"rw":18,"hex":"#951025","rgb":[149,16,37],"fam":"Red","tone":"Dark","h":350.8,"sat":78.1,"lum":27.6},{"s":118,"n":"3146","st":6,"rw":19,"hex":"#911023","rgb":[145,16,35],"fam":"Red","tone":"Dark","h":351.1,"sat":78.2,"lum":26.8},{"s":187,"n":"3281","st":6,"rw":20,"hex":"#930f2d","rgb":[147,15,45],"fam":"Red","tone":"Dark","h":346.7,"sat":78.5,"lum":27.4},{"s":8,"n":"3007","st":6,"rw":21,"hex":"#911831","rgb":[145,24,49],"fam":"Red","tone":"Dark","h":347.2,"sat":73.5,"lum":29.0},{"s":419,"n":"3770","st":6,"rw":22,"hex":"#87122e","rgb":[135,18,46],"fam":"Red","tone":"Dark","h":345.7,"sat":76.1,"lum":26.4},{"s":35,"n":"3038","st":6,"rw":23,"hex":"#701222","rgb":[112,18,34],"fam":"Red","tone":"Dark","h":350.1,"sat":73.3,"lum":22.7},{"s":651,"n":"4420","st":6,"rw":24,"hex":"#641f2a","rgb":[100,31,42],"fam":"Red","tone":"Dark","h":350.6,"sat":61.0,"lum":24.0},{"s":626,"n":"4343","st":7,"rw":1,"hex":"#822332","rgb":[130,35,50],"fam":"Red","tone":"Dark","h":350.8,"sat":63.9,"lum":29.4},{"s":147,"n":"3182","st":7,"rw":2,"hex":"#802f3d","rgb":[128,47,61],"fam":"Red","tone":"Dark","h":349.3,"sat":55.7,"lum":31.9},{"s":33,"n":"3036","st":7,"rw":3,"hex":"#55272f","rgb":[85,39,47],"fam":"Red","tone":"Dark","h":348.8,"sat":47.8,"lum":23.8},{"s":650,"n":"4419","st":7,"rw":4,"hex":"#7c2331","rgb":[124,35,49],"fam":"Red","tone":"Dark","h":350.2,"sat":63.0,"lum":28.4},{"s":516,"n":"4045","st":7,"rw":5,"hex":"#7b2a37","rgb":[123,42,55],"fam":"Red","tone":"Dark","h":350.1,"sat":57.9,"lum":29.9},{"s":239,"n":"3381","st":7,"rw":6,"hex":"#8c1f3b","rgb":[140,31,59],"fam":"Red","tone":"Dark","h":344.5,"sat":68.3,"lum":30.1},{"s":375,"n":"3684","st":7,"rw":7,"hex":"#722438","rgb":[114,36,56],"fam":"Red","tone":"Dark","h":344.8,"sat":60.2,"lum":27.6},{"s":146,"n":"3181","st":7,"rw":8,"hex":"#721b28","rgb":[114,27,40],"fam":"Red","tone":"Dark","h":350.9,"sat":66.9,"lum":25.1},{"s":416,"n":"3763","st":7,"rw":9,"hex":"#7e1f2e","rgb":[126,31,46],"fam":"Red","tone":"Dark","h":350.8,"sat":65.9,"lum":27.8},{"s":240,"n":"3382","st":7,"rw":10,"hex":"#5f2b3a","rgb":[95,43,58],"fam":"Red","tone":"Dark","h":342.5,"sat":48.0,"lum":26.6},{"s":367,"n":"3657","st":7,"rw":11,"hex":"#59293a","rgb":[89,41,58],"fam":"Pink","tone":"Dark","h":339.5,"sat":46.8,"lum":25.4},{"s":243,"n":"3385","st":7,"rw":12,"hex":"#5a212c","rgb":[90,33,44],"fam":"Red","tone":"Dark","h":348.7,"sat":55.8,"lum":23.1},{"s":274,"n":"3419","st":7,"rw":13,"hex":"#641f27","rgb":[100,31,39],"fam":"Red","tone":"Dark","h":352.5,"sat":61.0,"lum":23.9},{"s":242,"n":"3384","st":7,"rw":14,"hex":"#4c2029","rgb":[76,32,41],"fam":"Red","tone":"Dark","h":347.1,"sat":51.2,"lum":21.0},{"s":32,"n":"3035","st":7,"rw":15,"hex":"#481d27","rgb":[72,29,39],"fam":"Red","tone":"Dark","h":345.4,"sat":52.6,"lum":19.8},{"s":275,"n":"3420","st":7,"rw":16,"hex":"#4b1d27","rgb":[75,29,39],"fam":"Red","tone":"Dark","h":346.4,"sat":54.3,"lum":20.1},{"s":277,"n":"3422","st":7,"rw":17,"hex":"#46212e","rgb":[70,33,46],"fam":"Pink","tone":"Dark","h":339.4,"sat":46.1,"lum":20.7},{"s":515,"n":"4043","st":7,"rw":18,"hex":"#3c1e29","rgb":[60,30,41],"fam":"Pink","tone":"Dark","h":339.3,"sat":43.3,"lum":18.7},{"s":165,"n":"3236","st":7,"rw":19,"hex":"#3b232d","rgb":[59,35,45],"fam":"Pink","tone":"Dark","h":335.0,"sat":36.4,"lum":19.7},{"s":341,"n":"3557","st":7,"rw":20,"hex":"#bab3aa","rgb":[186,179,170],"fam":"Grey","tone":"Light","h":33.7,"sat":8.6,"lum":70.6},{"s":697,"n":"4570","st":7,"rw":21,"hex":"#beb4ac","rgb":[190,180,172],"fam":"Grey","tone":"Light","h":24.7,"sat":9.0,"lum":71.1},{"s":36,"n":"3039","st":7,"rw":22,"hex":"#bab0a9","rgb":[186,176,169],"fam":"Grey","tone":"Light","h":24.7,"sat":9.1,"lum":69.9},{"s":97,"n":"3121","st":7,"rw":23,"hex":"#b3a6a0","rgb":[179,166,160],"fam":"Grey","tone":"Light","h":18.9,"sat":10.6,"lum":66.4},{"s":510,"n":"4022","st":7,"rw":24,"hex":"#a39389","rgb":[163,147,137],"fam":"Brown","tone":"Medium","h":23.5,"sat":14.0,"lum":60.1},{"s":300,"n":"3447","st":8,"rw":1,"hex":"#c5b2ae","rgb":[197,178,174],"fam":"Grey","tone":"Light","h":10.4,"sat":11.7,"lum":71.5},{"s":620,"n":"4329","st":8,"rw":2,"hex":"#c6b4b2","rgb":[198,180,178],"fam":"Grey","tone":"Light","h":6.0,"sat":10.2,"lum":72.2},{"s":93,"n":"3116","st":8,"rw":3,"hex":"#c6a4a6","rgb":[198,164,166],"fam":"Pink","tone":"Light","h":356.0,"sat":15.2,"lum":69.1},{"s":351,"n":"3608","st":8,"rw":4,"hex":"#c49fa3","rgb":[196,159,163],"fam":"Pink","tone":"Light","h":354.4,"sat":16.4,"lum":67.8},{"s":15,"n":"3016","st":8,"rw":5,"hex":"#cca395","rgb":[204,163,149],"fam":"Cream","tone":"Light","h":15.0,"sat":23.6,"lum":69.2},{"s":637,"n":"4370","st":8,"rw":6,"hex":"#c58785","rgb":[197,135,133],"fam":"Red","tone":"Medium","h":2.1,"sat":28.6,"lum":61.9},{"s":120,"n":"3148","st":8,"rw":7,"hex":"#cb9998","rgb":[203,153,152],"fam":"Pink","tone":"Light","h":1.3,"sat":22.3,"lum":67.1},{"s":557,"n":"4144","st":8,"rw":8,"hex":"#c3a6a7","rgb":[195,166,167],"fam":"Grey","tone":"Light","h":357.6,"sat":12.9,"lum":69.3},{"s":91,"n":"3111","st":8,"rw":9,"hex":"#beaab0","rgb":[190,170,176],"fam":"Grey","tone":"Light","h":341.1,"sat":10.1,"lum":69.2},{"s":623,"n":"4338","st":8,"rw":10,"hex":"#c6a9b0","rgb":[198,169,176],"fam":"Grey","tone":"Light","h":345.6,"sat":12.7,"lum":70.7},{"s":28,"n":"3031","st":8,"rw":11,"hex":"#ba9c9f","rgb":[186,156,159],"fam":"Pink","tone":"Medium","h":353.3,"sat":14.5,"lum":65.7},{"s":433,"n":"3797","st":8,"rw":12,"hex":"#bf8d9d","rgb":[191,141,157],"fam":"Pink","tone":"Medium","h":340.5,"sat":22.6,"lum":63.3},{"s":210,"n":"3321","st":8,"rw":13,"hex":"#b88ea1","rgb":[184,142,161],"fam":"Pink","tone":"Medium","h":332.4,"sat":20.1,"lum":62.7},{"s":424,"n":"3782","st":8,"rw":14,"hex":"#c493a3","rgb":[196,147,163],"fam":"Pink","tone":"Medium","h":340.5,"sat":22.1,"lum":65.3},{"s":88,"n":"3108","st":8,"rw":15,"hex":"#b6808b","rgb":[182,128,139],"fam":"Red","tone":"Medium","h":348.5,"sat":25.8,"lum":58.9},{"s":511,"n":"4023","st":8,"rw":16,"hex":"#ac778f","rgb":[172,119,143],"fam":"Pink","tone":"Medium","h":332.6,"sat":26.7,"lum":55.7},{"s":619,"n":"4328","st":8,"rw":17,"hex":"#a35d7b","rgb":[163,93,123],"fam":"Pink","tone":"Medium","h":333.9,"sat":37.8,"lum":48.5},{"s":164,"n":"3235","st":8,"rw":18,"hex":"#a25780","rgb":[162,87,128],"fam":"Pink","tone":"Medium","h":327.3,"sat":40.5,"lum":47.4},{"s":208,"n":"3319","st":8,"rw":19,"hex":"#a55a73","rgb":[165,90,115],"fam":"Pink","tone":"Medium","h":340.0,"sat":39.8,"lum":47.9},{"s":534,"n":"4097","st":8,"rw":20,"hex":"#ae7591","rgb":[174,117,145],"fam":"Pink","tone":"Medium","h":330.0,"sat":28.7,"lum":55.6},{"s":304,"n":"3451","st":8,"rw":21,"hex":"#a34677","rgb":[163,70,119],"fam":"Pink","tone":"Medium","h":328.5,"sat":50.0,"lum":43.7},{"s":203,"n":"3309","st":8,"rw":22,"hex":"#b45a86","rgb":[180,90,134],"fam":"Pink","tone":"Medium","h":330.4,"sat":43.9,"lum":50.6},{"s":94,"n":"3117","st":8,"rw":23,"hex":"#a74167","rgb":[167,65,103],"fam":"Pink","tone":"Medium","h":338.0,"sat":53.6,"lum":42.6},{"s":654,"n":"4426","st":8,"rw":24,"hex":"#97446f","rgb":[151,68,111],"fam":"Pink","tone":"Medium","h":329.2,"sat":48.4,"lum":41.4},{"s":204,"n":"3310","st":9,"rw":1,"hex":"#923a66","rgb":[146,58,102],"fam":"Pink","tone":"Medium","h":330.0,"sat":52.7,"lum":38.3},{"s":89,"n":"3109","st":9,"rw":2,"hex":"#a83362","rgb":[168,51,98],"fam":"Pink","tone":"Medium","h":336.1,"sat":60.9,"lum":39.8},{"s":622,"n":"4337","st":9,"rw":3,"hex":"#a9305e","rgb":[169,48,94],"fam":"Pink","tone":"Medium","h":337.0,"sat":62.9,"lum":39.1},{"s":621,"n":"4332","st":9,"rw":4,"hex":"#a72c63","rgb":[167,44,99],"fam":"Pink","tone":"Medium","h":333.0,"sat":64.9,"lum":38.1},{"s":90,"n":"3110","st":9,"rw":5,"hex":"#9d2154","rgb":[157,33,84],"fam":"Pink","tone":"Dark","h":335.2,"sat":69.0,"lum":34.0},{"s":698,"n":"4571","st":9,"rw":6,"hex":"#931d41","rgb":[147,29,65],"fam":"Pink","tone":"Dark","h":341.7,"sat":70.5,"lum":31.0},{"s":407,"n":"3749","st":9,"rw":7,"hex":"#991744","rgb":[153,23,68],"fam":"Pink","tone":"Dark","h":339.3,"sat":74.8,"lum":30.7},{"s":151,"n":"3187","st":9,"rw":8,"hex":"#9d1a44","rgb":[157,26,68],"fam":"Pink","tone":"Dark","h":340.3,"sat":73.4,"lum":31.8},{"s":241,"n":"3383","st":9,"rw":9,"hex":"#831b41","rgb":[131,27,65],"fam":"Pink","tone":"Dark","h":338.1,"sat":69.4,"lum":28.5},{"s":150,"n":"3186","st":9,"rw":10,"hex":"#781c35","rgb":[120,28,53],"fam":"Red","tone":"Dark","h":343.4,"sat":67.5,"lum":26.4},{"s":600,"n":"4276","st":9,"rw":11,"hex":"#ac5d72","rgb":[172,93,114],"fam":"Red","tone":"Medium","h":344.3,"sat":40.1,"lum":49.3},{"s":702,"n":"4577","st":9,"rw":12,"hex":"#b76074","rgb":[183,96,116],"fam":"Red","tone":"Medium","h":346.6,"sat":41.5,"lum":51.6},{"s":206,"n":"3315","st":9,"rw":13,"hex":"#a24153","rgb":[162,65,83],"fam":"Red","tone":"Medium","h":348.8,"sat":52.8,"lum":41.0},{"s":542,"n":"4116","st":9,"rw":14,"hex":"#b86968","rgb":[184,105,104],"fam":"Red","tone":"Medium","h":0.9,"sat":38.0,"lum":53.1},{"s":592,"n":"4242","st":9,"rw":15,"hex":"#aa414d","rgb":[170,65,77],"fam":"Red","tone":"Medium","h":352.9,"sat":54.4,"lum":42.0},{"s":694,"n":"4567","st":9,"rw":16,"hex":"#a83743","rgb":[168,55,67],"fam":"Red","tone":"Medium","h":353.4,"sat":59.2,"lum":39.3},{"s":124,"n":"3154","st":9,"rw":17,"hex":"#9e2435","rgb":[158,36,53],"fam":"Red","tone":"Dark","h":351.7,"sat":67.9,"lum":33.3},{"s":591,"n":"4241","st":9,"rw":18,"hex":"#8b4458","rgb":[139,68,88],"fam":"Red","tone":"Medium","h":342.9,"sat":44.7,"lum":38.8},{"s":96,"n":"3119","st":9,"rw":19,"hex":"#813445","rgb":[129,52,69],"fam":"Red","tone":"Dark","h":347.0,"sat":52.3,"lum":33.5},{"s":655,"n":"4431","st":9,"rw":20,"hex":"#903948","rgb":[144,57,72],"fam":"Red","tone":"Medium","h":349.9,"sat":52.7,"lum":36.7},{"s":268,"n":"3412","st":9,"rw":21,"hex":"#6e272f","rgb":[110,39,47],"fam":"Red","tone":"Dark","h":352.6,"sat":57.0,"lum":27.2},{"s":606,"n":"4296","st":9,"rw":22,"hex":"#802c46","rgb":[128,44,70],"fam":"Pink","tone":"Dark","h":341.6,"sat":57.3,"lum":31.8},{"s":703,"n":"4580","st":9,"rw":23,"hex":"#6b2c3d","rgb":[107,44,61],"fam":"Red","tone":"Dark","h":344.2,"sat":51.4,"lum":28.5},{"s":297,"n":"3444","st":9,"rw":24,"hex":"#5f3141","rgb":[95,49,65],"fam":"Pink","tone":"Dark","h":339.1,"sat":43.0,"lum":28.1},{"s":696,"n":"4569","st":10,"rw":1,"hex":"#bf9492","rgb":[191,148,146],"fam":"Pink","tone":"Medium","h":3.1,"sat":20.5,"lum":64.2},{"s":643,"n":"4387","st":10,"rw":2,"hex":"#ba8989","rgb":[186,137,137],"fam":"Red","tone":"Medium","h":0.0,"sat":23.1,"lum":61.1},{"s":666,"n":"4473","st":10,"rw":3,"hex":"#b68892","rgb":[182,136,146],"fam":"Red","tone":"Medium","h":348.0,"sat":22.0,"lum":60.7},{"s":31,"n":"3034","st":10,"rw":4,"hex":"#d06685","rgb":[208,102,133],"fam":"Red","tone":"Medium","h":342.4,"sat":44.7,"lum":56.7},{"s":354,"n":"3622","st":10,"rw":5,"hex":"#cd4f6c","rgb":[205,79,108],"fam":"Red","tone":"Medium","h":346.4,"sat":53.9,"lum":50.9},{"s":148,"n":"3184","st":10,"rw":6,"hex":"#d83d53","rgb":[216,61,83],"fam":"Red","tone":"Medium","h":351.6,"sat":63.1,"lum":47.7},{"s":224,"n":"3354","st":10,"rw":7,"hex":"#dd597a","rgb":[221,89,122],"fam":"Red","tone":"Medium","h":344.9,"sat":52.5,"lum":55.6},{"s":269,"n":"3413","st":10,"rw":8,"hex":"#d73a65","rgb":[215,58,101],"fam":"Red","tone":"Medium","h":343.7,"sat":63.8,"lum":47.8},{"s":381,"n":"3705","st":10,"rw":9,"hex":"#dc588c","rgb":[220,88,140],"fam":"Pink","tone":"Medium","h":336.5,"sat":52.8,"lum":55.9},{"s":627,"n":"4344","st":10,"rw":10,"hex":"#cc305c","rgb":[204,48,92],"fam":"Red","tone":"Medium","h":343.2,"sat":67.0,"lum":43.9},{"s":497,"n":"3949","st":10,"rw":11,"hex":"#c57c66","rgb":[197,124,102],"fam":"Red","tone":"Medium","h":13.7,"sat":42.3,"lum":58.4},{"s":434,"n":"3798","st":10,"rw":12,"hex":"#c85b4c","rgb":[200,91,76],"fam":"Red","tone":"Medium","h":7.2,"sat":54.3,"lum":51.3},{"s":464,"n":"3880","st":10,"rw":13,"hex":"#c35748","rgb":[195,87,72],"fam":"Red","tone":"Medium","h":7.3,"sat":55.2,"lum":49.7},{"s":139,"n":"3174","st":10,"rw":14,"hex":"#a8413e","rgb":[168,65,62],"fam":"Red","tone":"Medium","h":1.9,"sat":55.6,"lum":41.1},{"s":358,"n":"3627","st":10,"rw":15,"hex":"#a9292e","rgb":[169,41,46],"fam":"Red","tone":"Dark","h":357.9,"sat":66.5,"lum":35.8},{"s":512,"n":"4024","st":10,"rw":16,"hex":"#9d3551","rgb":[157,53,81],"fam":"Red","tone":"Medium","h":343.7,"sat":58.2,"lum":37.8},{"s":363,"n":"3639","st":10,"rw":17,"hex":"#962b55","rgb":[150,43,85],"fam":"Pink","tone":"Dark","h":336.6,"sat":62.5,"lum":35.1},{"s":713,"n":"4595","st":10,"rw":18,"hex":"#d9cfc6","rgb":[217,207,198],"fam":"White","tone":"Light","h":28.4,"sat":8.8,"lum":81.2},{"s":162,"n":"3232","st":10,"rw":19,"hex":"#c9b4b5","rgb":[201,180,181],"fam":"Grey","tone":"Light","h":357.1,"sat":10.5,"lum":72.7},{"s":70,"n":"3080","st":10,"rw":20,"hex":"#c6a6b4","rgb":[198,166,180],"fam":"Pink","tone":"Light","h":334.3,"sat":14.2,"lum":70.1},{"s":519,"n":"4063","st":10,"rw":21,"hex":"#bca2af","rgb":[188,162,175],"fam":"Grey","tone":"Light","h":331.3,"sat":12.2,"lum":67.9},{"s":588,"n":"4233","st":10,"rw":22,"hex":"#bb9baf","rgb":[187,155,175],"fam":"Pink","tone":"Light","h":323.6,"sat":15.0,"lum":66.4},{"s":29,"n":"3032","st":10,"rw":23,"hex":"#9d7696","rgb":[157,118,150],"fam":"Purple","tone":"Medium","h":310.6,"sat":21.5,"lum":53.9},{"s":299,"n":"3446","st":10,"rw":24,"hex":"#b97497","rgb":[185,116,151],"fam":"Pink","tone":"Medium","h":329.5,"sat":33.0,"lum":57.2},{"s":465,"n":"3881","st":11,"rw":1,"hex":"#cd85b3","rgb":[205,133,179],"fam":"Pink","tone":"Medium","h":321.9,"sat":30.9,"lum":64.5},{"s":349,"n":"3605","st":11,"rw":2,"hex":"#a75686","rgb":[167,86,134],"fam":"Pink","tone":"Medium","h":324.2,"sat":42.9,"lum":48.0},{"s":520,"n":"4064","st":11,"rw":3,"hex":"#c181a8","rgb":[193,129,168],"fam":"Pink","tone":"Medium","h":323.6,"sat":29.2,"lum":61.4},{"s":30,"n":"3033","st":11,"rw":4,"hex":"#a56a99","rgb":[165,106,153],"fam":"Pink","tone":"Medium","h":312.7,"sat":31.3,"lum":52.6},{"s":319,"n":"3477","st":11,"rw":5,"hex":"#bc448c","rgb":[188,68,140],"fam":"Pink","tone":"Medium","h":324.0,"sat":55.9,"lum":47.7},{"s":430,"n":"3793","st":11,"rw":6,"hex":"#ac337e","rgb":[172,51,126],"fam":"Pink","tone":"Medium","h":322.6,"sat":61.6,"lum":41.3},{"s":443,"n":"3826","st":11,"rw":7,"hex":"#b03c80","rgb":[176,60,128],"fam":"Pink","tone":"Medium","h":324.7,"sat":58.0,"lum":43.7},{"s":298,"n":"3445","st":11,"rw":8,"hex":"#a52c79","rgb":[165,44,121],"fam":"Pink","tone":"Medium","h":321.9,"sat":64.5,"lum":38.7},{"s":391,"n":"3720","st":11,"rw":9,"hex":"#6a2b6a","rgb":[106,43,106],"fam":"Purple","tone":"Dark","h":300.0,"sat":51.8,"lum":30.0},{"s":152,"n":"3188","st":11,"rw":10,"hex":"#913976","rgb":[145,57,118],"fam":"Pink","tone":"Medium","h":318.5,"sat":53.1,"lum":38.6},{"s":247,"n":"3389","st":11,"rw":11,"hex":"#9e4160","rgb":[158,65,96],"fam":"Pink","tone":"Medium","h":340.2,"sat":51.6,"lum":41.0},{"s":652,"n":"4423","st":11,"rw":12,"hex":"#c5bbb9","rgb":[197,187,185],"fam":"Grey","tone":"Light","h":10.0,"sat":6.1,"lum":74.0},{"s":461,"n":"3875","st":11,"rw":13,"hex":"#bfb3c0","rgb":[191,179,192],"fam":"Grey","tone":"Light","h":295.4,"sat":6.8,"lum":71.8},{"s":708,"n":"4589","st":11,"rw":14,"hex":"#b6adb4","rgb":[182,173,180],"fam":"Grey","tone":"Light","h":313.3,"sat":4.9,"lum":69.2},{"s":518,"n":"4061","st":11,"rw":15,"hex":"#bcb7be","rgb":[188,183,190],"fam":"Grey","tone":"Light","h":282.9,"sat":3.7,"lum":72.3},{"s":205,"n":"3311","st":11,"rw":16,"hex":"#ada8bc","rgb":[173,168,188],"fam":"Grey","tone":"Light","h":255.0,"sat":10.6,"lum":67.4},{"s":638,"n":"4379","st":11,"rw":17,"hex":"#a294b4","rgb":[162,148,180],"fam":"Grey","tone":"Medium","h":265.7,"sat":15.6,"lum":62.3},{"s":712,"n":"4594","st":11,"rw":18,"hex":"#bcaabe","rgb":[188,170,190],"fam":"Grey","tone":"Light","h":293.7,"sat":10.1,"lum":69.5},{"s":431,"n":"3794","st":11,"rw":19,"hex":"#ab95af","rgb":[171,149,175],"fam":"Grey","tone":"Medium","h":292.2,"sat":13.1,"lum":63.0},{"s":421,"n":"3773","st":11,"rw":20,"hex":"#af8eb1","rgb":[175,142,177],"fam":"Grey","tone":"Medium","h":296.1,"sat":17.5,"lum":62.0},{"s":693,"n":"4564","st":11,"rw":21,"hex":"#aa8eb0","rgb":[170,142,176],"fam":"Grey","tone":"Medium","h":290.0,"sat":17.0,"lum":61.5},{"s":711,"n":"4593","st":11,"rw":22,"hex":"#99739b","rgb":[153,115,155],"fam":"Purple","tone":"Medium","h":298.3,"sat":22.4,"lum":53.0},{"s":414,"n":"3759","st":11,"rw":23,"hex":"#8a4f95","rgb":[138,79,149],"fam":"Purple","tone":"Medium","h":290.3,"sat":41.1,"lum":43.8},{"s":213,"n":"3334","st":11,"rw":24,"hex":"#7e488e","rgb":[126,72,142],"fam":"Purple","tone":"Medium","h":286.5,"sat":43.1,"lum":40.6},{"s":389,"n":"3718","st":12,"rw":1,"hex":"#7d438b","rgb":[125,67,139],"fam":"Purple","tone":"Medium","h":288.8,"sat":45.4,"lum":39.2},{"s":661,"n":"4458","st":12,"rw":2,"hex":"#8b4590","rgb":[139,69,144],"fam":"Purple","tone":"Medium","h":296.4,"sat":45.9,"lum":41.4},{"s":209,"n":"3320","st":12,"rw":3,"hex":"#613e62","rgb":[97,62,98],"fam":"Purple","tone":"Dark","h":298.2,"sat":32.0,"lum":32.7},{"s":458,"n":"3872","st":12,"rw":4,"hex":"#6f4268","rgb":[111,66,104],"fam":"Purple","tone":"Dark","h":308.8,"sat":35.7,"lum":35.4},{"s":362,"n":"3636","st":12,"rw":5,"hex":"#5c2c5e","rgb":[92,44,94],"fam":"Purple","tone":"Dark","h":297.4,"sat":46.5,"lum":28.0},{"s":450,"n":"3842","st":12,"rw":6,"hex":"#693668","rgb":[105,54,104],"fam":"Purple","tone":"Dark","h":301.3,"sat":42.2,"lum":32.1},{"s":212,"n":"3330","st":12,"rw":7,"hex":"#545793","rgb":[84,87,147],"fam":"Blue","tone":"Medium","h":236.8,"sat":37.6,"lum":39.7},{"s":211,"n":"3322","st":12,"rw":8,"hex":"#41447e","rgb":[65,68,126],"fam":"Blue","tone":"Dark","h":236.7,"sat":42.6,"lum":32.2},{"s":92,"n":"3112","st":12,"rw":9,"hex":"#50407d","rgb":[80,64,125],"fam":"Purple","tone":"Dark","h":256.4,"sat":43.0,"lum":32.8},{"s":521,"n":"4066","st":12,"rw":10,"hex":"#463a7a","rgb":[70,58,122],"fam":"Blue","tone":"Dark","h":250.5,"sat":45.6,"lum":30.4},{"s":221,"n":"3343","st":12,"rw":11,"hex":"#303262","rgb":[48,50,98],"fam":"Blue","tone":"Dark","h":237.4,"sat":44.7,"lum":24.9},{"s":663,"n":"4462","st":12,"rw":12,"hex":"#40425d","rgb":[64,66,93],"fam":"Blue","tone":"Dark","h":235.6,"sat":27.6,"lum":29.5},{"s":163,"n":"3233","st":12,"rw":13,"hex":"#423c5a","rgb":[66,60,90],"fam":"Blue","tone":"Dark","h":252.9,"sat":29.5,"lum":28.2},{"s":459,"n":"3873","st":12,"rw":14,"hex":"#49285f","rgb":[73,40,95],"fam":"Purple","tone":"Dark","h":276.5,"sat":51.0,"lum":25.1},{"s":98,"n":"3122","st":12,"rw":15,"hex":"#4d356b","rgb":[77,53,107],"fam":"Purple","tone":"Dark","h":266.9,"sat":44.1,"lum":29.1},{"s":415,"n":"3760","st":12,"rw":16,"hex":"#583975","rgb":[88,57,117],"fam":"Purple","tone":"Dark","h":270.5,"sat":45.5,"lum":31.6},{"s":662,"n":"4459","st":12,"rw":17,"hex":"#48336e","rgb":[72,51,110],"fam":"Purple","tone":"Dark","h":261.1,"sat":47.4,"lum":28.2},{"s":278,"n":"3423","st":12,"rw":18,"hex":"#262763","rgb":[38,39,99],"fam":"Blue","tone":"Dark","h":238.9,"sat":53.8,"lum":21.6},{"s":230,"n":"3362","st":12,"rw":19,"hex":"#735e65","rgb":[115,94,101],"fam":"Pink","tone":"Medium","h":341.1,"sat":16.0,"lum":41.7},{"s":245,"n":"3387","st":12,"rw":20,"hex":"#855a6e","rgb":[133,90,110],"fam":"Pink","tone":"Medium","h":332.3,"sat":28.7,"lum":43.4},{"s":664,"n":"4468","st":12,"rw":21,"hex":"#645162","rgb":[100,81,98],"fam":"Grey","tone":"Medium","h":306.7,"sat":17.1,"lum":36.9},{"s":667,"n":"4477","st":12,"rw":22,"hex":"#71606c","rgb":[113,96,108],"fam":"Pink","tone":"Medium","h":318.8,"sat":13.7,"lum":42.0},{"s":279,"n":"3424","st":12,"rw":23,"hex":"#663f4a","rgb":[102,63,74],"fam":"Red","tone":"Dark","h":342.9,"sat":33.0,"lum":32.4},{"s":710,"n":"4591","st":12,"rw":24,"hex":"#563b4d","rgb":[86,59,77],"fam":"Purple","tone":"Dark","h":319.2,"sat":27.5,"lum":29.6},{"s":493,"n":"3940","st":13,"rw":1,"hex":"#573f5b","rgb":[87,63,91],"fam":"Purple","tone":"Dark","h":290.8,"sat":27.1,"lum":31.2},{"s":246,"n":"3388","st":13,"rw":2,"hex":"#5d324d","rgb":[93,50,77],"fam":"Pink","tone":"Dark","h":322.5,"sat":40.8,"lum":28.6},{"s":276,"n":"3421","st":13,"rw":3,"hex":"#483141","rgb":[72,49,65],"fam":"Purple","tone":"Dark","h":319.1,"sat":28.2,"lum":25.2},{"s":244,"n":"3386","st":13,"rw":4,"hex":"#472c3a","rgb":[71,44,58],"fam":"Purple","tone":"Dark","h":327.7,"sat":33.8,"lum":23.7},{"s":442,"n":"3823","st":13,"rw":5,"hex":"#3f324f","rgb":[63,50,79],"fam":"Purple","tone":"Dark","h":267.9,"sat":32.9,"lum":25.1},{"s":305,"n":"3452","st":13,"rw":6,"hex":"#453244","rgb":[69,50,68],"fam":"Purple","tone":"Dark","h":303.3,"sat":24.0,"lum":25.2},{"s":368,"n":"3658","st":13,"rw":7,"hex":"#39303f","rgb":[57,48,63],"fam":"Purple","tone":"Dark","h":276.0,"sat":21.4,"lum":23.3},{"s":558,"n":"4148","st":13,"rw":8,"hex":"#3b353c","rgb":[59,53,60],"fam":"Grey","tone":"Dark","h":292.5,"sat":11.9,"lum":24.3},{"s":675,"n":"4501","st":13,"rw":9,"hex":"#b9b9b4","rgb":[185,185,180],"fam":"Grey","tone":"Light","h":60.0,"sat":2.7,"lum":72.3},{"s":585,"n":"4225","st":13,"rw":10,"hex":"#b4b8bb","rgb":[180,184,187],"fam":"Grey","tone":"Light","h":205.7,"sat":3.7,"lum":71.8},{"s":653,"n":"4424","st":13,"rw":11,"hex":"#aaa8ad","rgb":[170,168,173],"fam":"Grey","tone":"Light","h":264.0,"sat":2.9,"lum":66.3},{"s":659,"n":"4453","st":13,"rw":12,"hex":"#9b9daa","rgb":[155,157,170],"fam":"Grey","tone":"Medium","h":232.0,"sat":8.8,"lum":62.3},{"s":66,"n":"3074","st":13,"rw":13,"hex":"#a0b3bb","rgb":[160,179,187],"fam":"Grey","tone":"Light","h":197.5,"sat":12.8,"lum":68.9},{"s":67,"n":"3075","st":13,"rw":14,"hex":"#a8b6bb","rgb":[168,182,187],"fam":"Grey","tone":"Light","h":195.8,"sat":10.2,"lum":70.0},{"s":629,"n":"4355","st":13,"rw":15,"hex":"#8eaab6","rgb":[142,170,182],"fam":"Teal","tone":"Medium","h":198.9,"sat":19.2,"lum":64.7},{"s":27,"n":"3030","st":13,"rw":16,"hex":"#a9b0b6","rgb":[169,176,182],"fam":"Grey","tone":"Light","h":207.7,"sat":7.1,"lum":68.5},{"s":411,"n":"3755","st":13,"rw":17,"hex":"#7797ae","rgb":[119,151,174],"fam":"Blue","tone":"Medium","h":205.0,"sat":27.6,"lum":58.0},{"s":628,"n":"4354","st":13,"rw":18,"hex":"#89a3bc","rgb":[137,163,188],"fam":"Blue","tone":"Medium","h":209.3,"sat":23.9,"lum":63.4},{"s":25,"n":"3028","st":13,"rw":19,"hex":"#678faa","rgb":[103,143,170],"fam":"Blue","tone":"Medium","h":204.4,"sat":34.5,"lum":54.6},{"s":616,"n":"4320","st":13,"rw":20,"hex":"#3c6ba1","rgb":[60,107,161],"fam":"Blue","tone":"Medium","h":212.4,"sat":54.9,"lum":42.0},{"s":115,"n":"3143","st":13,"rw":21,"hex":"#4d6ea2","rgb":[77,110,162],"fam":"Blue","tone":"Medium","h":216.8,"sat":46.0,"lum":44.5},{"s":594,"n":"4258","st":13,"rw":22,"hex":"#77849e","rgb":[119,132,158],"fam":"Blue","tone":"Medium","h":220.6,"sat":21.4,"lum":53.1},{"s":214,"n":"3335","st":13,"rw":23,"hex":"#415795","rgb":[65,87,149],"fam":"Blue","tone":"Medium","h":224.0,"sat":49.7,"lum":37.8},{"s":660,"n":"4455","st":13,"rw":24,"hex":"#505d8b","rgb":[80,93,139],"fam":"Blue","tone":"Medium","h":227.3,"sat":36.9,"lum":39.8},{"s":463,"n":"3878","st":14,"rw":1,"hex":"#4b5a91","rgb":[75,90,145],"fam":"Blue","tone":"Medium","h":227.4,"sat":42.2,"lum":39.1},{"s":107,"n":"3133","st":14,"rw":2,"hex":"#3e7ab1","rgb":[62,122,177],"fam":"Blue","tone":"Medium","h":208.5,"sat":57.1,"lum":46.5},{"s":283,"n":"3430","st":14,"rw":3,"hex":"#356797","rgb":[53,103,151],"fam":"Blue","tone":"Medium","h":209.7,"sat":56.9,"lum":39.9},{"s":695,"n":"4568","st":14,"rw":4,"hex":"#366898","rgb":[54,104,152],"fam":"Blue","tone":"Medium","h":209.7,"sat":56.5,"lum":40.3},{"s":142,"n":"3177","st":14,"rw":5,"hex":"#2278ad","rgb":[34,120,173],"fam":"Blue","tone":"Medium","h":202.6,"sat":70.5,"lum":42.9},{"s":26,"n":"3029","st":14,"rw":6,"hex":"#247fa9","rgb":[36,127,169],"fam":"Teal","tone":"Medium","h":199.0,"sat":68.8,"lum":44.4},{"s":195,"n":"3296","st":14,"rw":7,"hex":"#40799c","rgb":[64,121,156],"fam":"Blue","tone":"Medium","h":203.0,"sat":51.6,"lum":44.9},{"s":280,"n":"3425","st":14,"rw":8,"hex":"#085085","rgb":[8,80,133],"fam":"Blue","tone":"Dark","h":205.7,"sat":82.4,"lum":29.2},{"s":68,"n":"3076","st":14,"rw":9,"hex":"#1244a1","rgb":[18,68,161],"fam":"Blue","tone":"Dark","h":219.0,"sat":77.8,"lum":29.9},{"s":108,"n":"3134","st":14,"rw":10,"hex":"#2c62ad","rgb":[44,98,173],"fam":"Blue","tone":"Medium","h":215.0,"sat":65.3,"lum":39.4},{"s":134,"n":"3166","st":14,"rw":11,"hex":"#1b3a8a","rgb":[27,58,138],"fam":"Blue","tone":"Dark","h":223.0,"sat":70.7,"lum":26.9},{"s":448,"n":"3836","st":14,"rw":12,"hex":"#193069","rgb":[25,48,105],"fam":"Blue","tone":"Dark","h":222.7,"sat":67.0,"lum":22.2},{"s":501,"n":"4006","st":14,"rw":13,"hex":"#1c3285","rgb":[28,50,133],"fam":"Blue","tone":"Dark","h":227.9,"sat":69.1,"lum":25.0},{"s":412,"n":"3757","st":14,"rw":14,"hex":"#163e87","rgb":[22,62,135],"fam":"Blue","tone":"Dark","h":219.2,"sat":73.2,"lum":27.1},{"s":135,"n":"3167","st":14,"rw":15,"hex":"#204384","rgb":[32,67,132],"fam":"Blue","tone":"Dark","h":218.7,"sat":66.7,"lum":29.0},{"s":140,"n":"3175","st":14,"rw":16,"hex":"#345a8c","rgb":[52,90,140],"fam":"Blue","tone":"Medium","h":213.8,"sat":54.9,"lum":36.4},{"s":509,"n":"4020","st":14,"rw":17,"hex":"#24567b","rgb":[36,86,123],"fam":"Blue","tone":"Dark","h":205.4,"sat":61.9,"lum":32.7},{"s":39,"n":"3042","st":14,"rw":18,"hex":"#224579","rgb":[34,69,121],"fam":"Blue","tone":"Dark","h":216.2,"sat":62.9,"lum":28.7},{"s":236,"n":"3376","st":14,"rw":19,"hex":"#1e3959","rgb":[30,57,89],"fam":"Blue","tone":"Dark","h":212.7,"sat":58.5,"lum":23.5},{"s":692,"n":"4563","st":14,"rw":20,"hex":"#203450","rgb":[32,52,80],"fam":"Blue","tone":"Dark","h":216.0,"sat":52.3,"lum":22.2},{"s":233,"n":"3366","st":14,"rw":21,"hex":"#1f3154","rgb":[31,49,84],"fam":"Blue","tone":"Dark","h":219.2,"sat":55.1,"lum":21.8},{"s":169,"n":"3242","st":14,"rw":22,"hex":"#1a2f52","rgb":[26,47,82],"fam":"Blue","tone":"Dark","h":217.4,"sat":60.2,"lum":20.7},{"s":466,"n":"3882","st":14,"rw":23,"hex":"#1d2d42","rgb":[29,45,66],"fam":"Blue","tone":"Dark","h":214.3,"sat":48.6,"lum":19.5},{"s":422,"n":"3775","st":14,"rw":24,"hex":"#1f2c45","rgb":[31,44,69],"fam":"Blue","tone":"Dark","h":220.0,"sat":48.0,"lum":19.7},{"s":170,"n":"3243","st":15,"rw":1,"hex":"#313c4e","rgb":[49,60,78],"fam":"Blue","tone":"Dark","h":216.4,"sat":33.3,"lum":25.7},{"s":617,"n":"4322","st":15,"rw":2,"hex":"#2c3a4c","rgb":[44,58,76],"fam":"Blue","tone":"Dark","h":214.0,"sat":36.6,"lum":24.7},{"s":40,"n":"3043","st":15,"rw":3,"hex":"#2c3847","rgb":[44,56,71],"fam":"Blue","tone":"Dark","h":212.3,"sat":33.8,"lum":23.9},{"s":380,"n":"3704","st":15,"rw":4,"hex":"#283145","rgb":[40,49,69],"fam":"Blue","tone":"Dark","h":222.2,"sat":36.0,"lum":21.9},{"s":671,"n":"4489","st":15,"rw":5,"hex":"#213948","rgb":[33,57,72],"fam":"Blue","tone":"Dark","h":202.7,"sat":47.4,"lum":23.0},{"s":258,"n":"3402","st":15,"rw":6,"hex":"#26343f","rgb":[38,52,63],"fam":"Blue","tone":"Dark","h":206.4,"sat":35.7,"lum":22.0},{"s":41,"n":"3044","st":15,"rw":7,"hex":"#2a3440","rgb":[42,52,64],"fam":"Blue","tone":"Dark","h":212.7,"sat":31.0,"lum":22.5},{"s":171,"n":"3244","st":15,"rw":8,"hex":"#23303e","rgb":[35,48,62],"fam":"Blue","tone":"Dark","h":211.1,"sat":39.1,"lum":20.7},{"s":257,"n":"3401","st":15,"rw":9,"hex":"#25303a","rgb":[37,48,58],"fam":"Blue","tone":"Dark","h":208.6,"sat":32.3,"lum":20.7},{"s":444,"n":"3828","st":15,"rw":10,"hex":"#2d3543","rgb":[45,53,67],"fam":"Blue","tone":"Dark","h":217.1,"sat":28.8,"lum":23.2},{"s":24,"n":"3027","st":15,"rw":11,"hex":"#a8b1a2","rgb":[168,177,162],"fam":"Grey","tone":"Light","h":96.0,"sat":8.5,"lum":67.7},{"s":618,"n":"4324","st":15,"rw":12,"hex":"#a7b0ad","rgb":[167,176,173],"fam":"Grey","tone":"Light","h":160.0,"sat":5.1,"lum":67.8},{"s":79,"n":"3092","st":15,"rw":13,"hex":"#89a796","rgb":[137,167,150],"fam":"Grey","tone":"Medium","h":146.7,"sat":16.1,"lum":62.0},{"s":184,"n":"3274","st":15,"rw":14,"hex":"#a5b9b8","rgb":[165,185,184],"fam":"Grey","tone":"Light","h":177.0,"sat":10.8,"lum":70.2},{"s":309,"n":"3458","st":15,"rw":15,"hex":"#92abae","rgb":[146,171,174],"fam":"Grey","tone":"Medium","h":185.0,"sat":13.8,"lum":65.0},{"s":282,"n":"3429","st":15,"rw":16,"hex":"#91aeaa","rgb":[145,174,170],"fam":"Grey","tone":"Medium","h":172.8,"sat":14.4,"lum":65.2},{"s":709,"n":"4590","st":15,"rw":17,"hex":"#84a49d","rgb":[132,164,157],"fam":"Grey","tone":"Medium","h":167.1,"sat":17.0,"lum":61.2},{"s":469,"n":"3888","st":15,"rw":18,"hex":"#5f9095","rgb":[95,144,149],"fam":"Teal","tone":"Medium","h":186.3,"sat":31.8,"lum":52.4},{"s":670,"n":"4482","st":15,"rw":19,"hex":"#3c8599","rgb":[60,133,153],"fam":"Teal","tone":"Medium","h":193.0,"sat":53.5,"lum":46.9},{"s":668,"n":"4479","st":15,"rw":20,"hex":"#428e9e","rgb":[66,142,158],"fam":"Teal","tone":"Medium","h":190.4,"sat":50.9,"lum":49.6},{"s":426,"n":"3789","st":15,"rw":21,"hex":"#3990a0","rgb":[57,144,160],"fam":"Teal","tone":"Medium","h":189.2,"sat":56.5,"lum":49.2},{"s":281,"n":"3426","st":15,"rw":22,"hex":"#96a39c","rgb":[150,163,156],"fam":"Grey","tone":"Medium","h":147.7,"sat":7.9,"lum":62.5},{"s":259,"n":"3403","st":15,"rw":23,"hex":"#5a90a1","rgb":[90,144,161],"fam":"Teal","tone":"Medium","h":194.3,"sat":38.9,"lum":52.7},{"s":350,"n":"3607","st":15,"rw":24,"hex":"#557e8d","rgb":[85,126,141],"fam":"Teal","tone":"Medium","h":195.6,"sat":35.0,"lum":47.2},{"s":260,"n":"3404","st":16,"rw":1,"hex":"#668fa8","rgb":[102,143,168],"fam":"Blue","tone":"Medium","h":202.8,"sat":34.3,"lum":54.4},{"s":141,"n":"3176","st":16,"rw":2,"hex":"#349ab5","rgb":[52,154,181],"fam":"Teal","tone":"Medium","h":192.7,"sat":62.4,"lum":52.2},{"s":669,"n":"4480","st":16,"rw":3,"hex":"#0c87a3","rgb":[12,135,163],"fam":"Teal","tone":"Medium","h":191.3,"sat":81.1,"lum":43.0},{"s":716,"n":"4598","st":16,"rw":4,"hex":"#097a94","rgb":[9,122,148],"fam":"Teal","tone":"Medium","h":191.1,"sat":82.7,"lum":39.0},{"s":717,"n":"4599","st":16,"rw":5,"hex":"#0087a5","rgb":[0,135,165],"fam":"Teal","tone":"Medium","h":190.9,"sat":89.2,"lum":41.5},{"s":715,"n":"4597","st":16,"rw":6,"hex":"#75c6c5","rgb":[117,198,197],"fam":"Teal","tone":"Light","h":179.2,"sat":36.0,"lum":68.9},{"s":718,"n":"6093","st":16,"rw":7,"hex":"#42b8c0","rgb":[66,184,192],"fam":"Teal","tone":"Medium","h":183.8,"sat":57.6,"lum":60.4},{"s":719,"n":"6094","st":16,"rw":8,"hex":"#1aa8b8","rgb":[26,168,184],"fam":"Teal","tone":"Medium","h":186.0,"sat":75.5,"lum":52.6},{"s":417,"n":"3764","st":16,"rw":9,"hex":"#0089b0","rgb":[0,137,176],"fam":"Teal","tone":"Medium","h":193.2,"sat":87.5,"lum":43.1},{"s":80,"n":"3095","st":16,"rw":10,"hex":"#098bb5","rgb":[9,139,181],"fam":"Teal","tone":"Medium","h":194.7,"sat":83.4,"lum":44.8},{"s":194,"n":"3295","st":16,"rw":11,"hex":"#0070a3","rgb":[0,112,163],"fam":"Teal","tone":"Medium","h":198.6,"sat":88.4,"lum":37.0},{"s":196,"n":"3297","st":16,"rw":12,"hex":"#0a6aa8","rgb":[10,106,168],"fam":"Blue","tone":"Medium","h":203.7,"sat":82.2,"lum":37.3},{"s":567,"n":"4194","st":16,"rw":13,"hex":"#b7c3ac","rgb":[183,195,172],"fam":"Grey","tone":"Light","h":91.3,"sat":11.9,"lum":73.6},{"s":321,"n":"3483","st":16,"rw":14,"hex":"#a1bea6","rgb":[161,190,166],"fam":"Grey","tone":"Light","h":129.6,"sat":13.2,"lum":70.2},{"s":75,"n":"3088","st":16,"rw":15,"hex":"#9db89e","rgb":[157,184,158],"fam":"Grey","tone":"Light","h":122.5,"sat":13.0,"lum":68.3},{"s":685,"n":"4546","st":16,"rw":16,"hex":"#9fbfad","rgb":[159,191,173],"fam":"Grey","tone":"Light","h":147.9,"sat":14.7,"lum":70.6},{"s":439,"n":"3808","st":16,"rw":17,"hex":"#5ba694","rgb":[91,166,148],"fam":"Teal","tone":"Medium","h":165.5,"sat":39.5,"lum":57.0},{"s":173,"n":"3246","st":16,"rw":18,"hex":"#4a9b8e","rgb":[74,155,142],"fam":"Teal","tone":"Medium","h":170.7,"sat":45.5,"lum":52.4},{"s":192,"n":"3291","st":16,"rw":19,"hex":"#437e6f","rgb":[67,126,111],"fam":"Teal","tone":"Medium","h":165.3,"sat":41.1,"lum":43.8},{"s":47,"n":"3052","st":16,"rw":20,"hex":"#3f735f","rgb":[63,115,95],"fam":"Green","tone":"Medium","h":157.0,"sat":39.5,"lum":40.4},{"s":106,"n":"3132","st":16,"rw":21,"hex":"#b0bbaa","rgb":[176,187,170],"fam":"Grey","tone":"Light","h":98.8,"sat":9.1,"lum":71.3},{"s":76,"n":"3089","st":16,"rw":22,"hex":"#a3af92","rgb":[163,175,146],"fam":"Grey","tone":"Light","h":84.0,"sat":14.3,"lum":66.3},{"s":547,"n":"4131","st":16,"rw":23,"hex":"#a4b6aa","rgb":[164,182,170],"fam":"Grey","tone":"Light","h":140.0,"sat":9.9,"lum":68.7},{"s":565,"n":"4192","st":16,"rw":24,"hex":"#92ae92","rgb":[146,174,146],"fam":"Grey","tone":"Medium","h":120.0,"sat":13.8,"lum":64.3},{"s":42,"n":"3045","st":17,"rw":1,"hex":"#b7c3a4","rgb":[183,195,164],"fam":"Grey","tone":"Light","h":82.2,"sat":13.9,"lum":73.7},{"s":43,"n":"3046","st":17,"rw":2,"hex":"#a8b99c","rgb":[168,185,156],"fam":"Grey","tone":"Light","h":94.6,"sat":14.1,"lum":69.6},{"s":197,"n":"3299","st":17,"rw":3,"hex":"#a5bf9d","rgb":[165,191,157],"fam":"Grey","tone":"Light","h":105.5,"sat":15.3,"lum":70.6},{"s":394,"n":"3723","st":17,"rw":4,"hex":"#8ea987","rgb":[142,169,135],"fam":"Grey","tone":"Medium","h":108.0,"sat":17.6,"lum":62.5},{"s":360,"n":"3631","st":17,"rw":5,"hex":"#5ca282","rgb":[92,162,130],"fam":"Green","tone":"Medium","h":152.9,"sat":38.0,"lum":55.4},{"s":467,"n":"3883","st":17,"rw":6,"hex":"#58a37c","rgb":[88,163,124],"fam":"Green","tone":"Medium","h":149.1,"sat":40.2,"lum":55.1},{"s":2,"n":"2089","st":17,"rw":7,"hex":"#84b6ae","rgb":[132,182,174],"fam":"Teal","tone":"Medium","h":170.5,"sat":24.2,"lum":65.9},{"s":190,"n":"3289","st":17,"rw":8,"hex":"#4da298","rgb":[77,162,152],"fam":"Teal","tone":"Medium","h":172.8,"sat":46.0,"lum":54.7},{"s":614,"n":"4314","st":17,"rw":9,"hex":"#5fa79c","rgb":[95,167,156],"fam":"Teal","tone":"Medium","h":170.6,"sat":38.1,"lum":57.9},{"s":413,"n":"3758","st":17,"rw":10,"hex":"#2ca3a6","rgb":[44,163,166],"fam":"Teal","tone":"Medium","h":181.7,"sat":64.7,"lum":52.1},{"s":288,"n":"3435","st":17,"rw":11,"hex":"#259fa2","rgb":[37,159,162],"fam":"Teal","tone":"Medium","h":181.6,"sat":67.5,"lum":50.3},{"s":437,"n":"3806","st":17,"rw":12,"hex":"#1e9d9e","rgb":[30,157,158],"fam":"Teal","tone":"Medium","h":180.5,"sat":71.1,"lum":48.9},{"s":404,"n":"3746","st":17,"rw":13,"hex":"#2caaad","rgb":[44,170,173],"fam":"Teal","tone":"Medium","h":181.1,"sat":65.3,"lum":54.1},{"s":451,"n":"3846","st":17,"rw":14,"hex":"#108e8e","rgb":[16,142,142],"fam":"Teal","tone":"Medium","h":180.0,"sat":77.8,"lum":43.3},{"s":81,"n":"3096","st":17,"rw":15,"hex":"#396e79","rgb":[57,110,121],"fam":"Teal","tone":"Medium","h":190.5,"sat":46.0,"lum":39.6},{"s":285,"n":"3432","st":17,"rw":16,"hex":"#056771","rgb":[5,103,113],"fam":"Teal","tone":"Dark","h":185.5,"sat":83.8,"lum":32.3},{"s":445,"n":"3831","st":17,"rw":17,"hex":"#0a6c6c","rgb":[10,108,108],"fam":"Teal","tone":"Dark","h":180.0,"sat":79.5,"lum":33.5},{"s":284,"n":"3431","st":17,"rw":18,"hex":"#006875","rgb":[0,104,117],"fam":"Teal","tone":"Dark","h":187.1,"sat":90.9,"lum":31.6},{"s":78,"n":"3091","st":17,"rw":19,"hex":"#096179","rgb":[9,97,121],"fam":"Teal","tone":"Dark","h":192.5,"sat":81.5,"lum":32.0},{"s":352,"n":"3610","st":17,"rw":20,"hex":"#00637e","rgb":[0,99,126],"fam":"Teal","tone":"Dark","h":192.8,"sat":90.7,"lum":31.1},{"s":544,"n":"4120","st":17,"rw":21,"hex":"#0f647d","rgb":[15,100,125],"fam":"Teal","tone":"Dark","h":193.3,"sat":77.3,"lum":33.5},{"s":77,"n":"3090","st":17,"rw":22,"hex":"#135055","rgb":[19,80,85],"fam":"Teal","tone":"Dark","h":183.9,"sat":67.8,"lum":27.2},{"s":373,"n":"3672","st":17,"rw":23,"hex":"#0d443f","rgb":[13,68,63],"fam":"Teal","tone":"Dark","h":175.4,"sat":70.3,"lum":22.7},{"s":470,"n":"3890","st":17,"rw":24,"hex":"#0a454d","rgb":[10,69,77],"fam":"Teal","tone":"Dark","h":187.6,"sat":75.9,"lum":23.3},{"s":447,"n":"3835","st":18,"rw":1,"hex":"#1b4450","rgb":[27,68,80],"fam":"Teal","tone":"Dark","h":194.4,"sat":58.1,"lum":25.1},{"s":441,"n":"3822","st":18,"rw":2,"hex":"#11485a","rgb":[17,72,90],"fam":"Teal","tone":"Dark","h":195.0,"sat":71.6,"lum":25.4},{"s":238,"n":"3380","st":18,"rw":3,"hex":"#027373","rgb":[2,115,115],"fam":"Teal","tone":"Dark","h":180.0,"sat":86.6,"lum":34.6},{"s":149,"n":"3185","st":18,"rw":4,"hex":"#0e4f4a","rgb":[14,79,74],"fam":"Teal","tone":"Dark","h":175.1,"sat":71.8,"lum":26.0},{"s":330,"n":"3514","st":18,"rw":5,"hex":"#096450","rgb":[9,100,80],"fam":"Teal","tone":"Dark","h":166.4,"sat":80.0,"lum":30.5},{"s":193,"n":"3293","st":18,"rw":6,"hex":"#076c5f","rgb":[7,108,95],"fam":"Teal","tone":"Dark","h":172.2,"sat":82.1,"lum":32.6},{"s":186,"n":"3280","st":18,"rw":7,"hex":"#0b5148","rgb":[11,81,72],"fam":"Teal","tone":"Dark","h":171.8,"sat":75.9,"lum":26.0},{"s":573,"n":"4205","st":18,"rw":8,"hex":"#0d564e","rgb":[13,86,78],"fam":"Teal","tone":"Dark","h":173.8,"sat":74.7,"lum":27.4},{"s":406,"n":"3748","st":18,"rw":9,"hex":"#026a60","rgb":[2,106,96],"fam":"Teal","tone":"Dark","h":174.3,"sat":86.4,"lum":31.6},{"s":477,"n":"3915","st":18,"rw":10,"hex":"#114a47","rgb":[17,74,71],"fam":"Teal","tone":"Dark","h":176.7,"sat":67.5,"lum":24.9},{"s":188,"n":"3284","st":18,"rw":11,"hex":"#0e4842","rgb":[14,72,66],"fam":"Teal","tone":"Dark","h":173.5,"sat":70.5,"lum":23.9},{"s":418,"n":"3768","st":18,"rw":12,"hex":"#145a42","rgb":[20,90,66],"fam":"Green","tone":"Dark","h":159.7,"sat":68.4,"lum":28.6},{"s":572,"n":"4204","st":18,"rw":13,"hex":"#c0ba9e","rgb":[192,186,158],"fam":"Cream","tone":"Light","h":49.7,"sat":15.2,"lum":72.5},{"s":615,"n":"4319","st":18,"rw":14,"hex":"#aeb28b","rgb":[174,178,139],"fam":"Green","tone":"Light","h":65.3,"sat":19.1,"lum":67.9},{"s":85,"n":"3104","st":18,"rw":15,"hex":"#bbb182","rgb":[187,177,130],"fam":"Gold","tone":"Light","h":49.2,"sat":26.7,"lum":69.0},{"s":122,"n":"3150","st":18,"rw":16,"hex":"#c5be7a","rgb":[197,190,122],"fam":"Cream","tone":"Light","h":54.5,"sat":33.2,"lum":72.6},{"s":624,"n":"4340","st":18,"rw":17,"hex":"#abb05a","rgb":[171,176,90],"fam":"Gold","tone":"Medium","h":63.2,"sat":42.6,"lum":65.2},{"s":553,"n":"4139","st":18,"rw":18,"hex":"#b7b675","rgb":[183,182,117],"fam":"Gold","tone":"Light","h":59.0,"sat":31.7,"lum":68.9},{"s":545,"n":"4124","st":18,"rw":19,"hex":"#9b9669","rgb":[155,150,105],"fam":"Gold","tone":"Medium","h":54.5,"sat":28.2,"lum":58.3},{"s":83,"n":"3100","st":18,"rw":20,"hex":"#9e9f73","rgb":[158,159,115],"fam":"Gold","tone":"Medium","h":61.5,"sat":24.4,"lum":60.9},{"s":44,"n":"3047","st":18,"rw":21,"hex":"#9aa269","rgb":[154,162,105],"fam":"Green","tone":"Medium","h":68.4,"sat":30.7,"lum":60.9},{"s":513,"n":"4035","st":18,"rw":22,"hex":"#a09c52","rgb":[160,156,82],"fam":"Gold","tone":"Medium","h":57.4,"sat":42.9,"lum":59.4},{"s":175,"n":"3248","st":18,"rw":23,"hex":"#a3a13c","rgb":[163,161,60],"fam":"Gold","tone":"Medium","h":58.7,"sat":55.5,"lum":59.8},{"s":435,"n":"3799","st":18,"rw":24,"hex":"#83772d","rgb":[131,119,45],"fam":"Gold","tone":"Medium","h":51.4,"sat":57.5,"lum":46.6},{"s":535,"n":"4101","st":19,"rw":1,"hex":"#939932","rgb":[147,153,50],"fam":"Gold","tone":"Medium","h":63.9,"sat":59.4,"lum":56.0},{"s":45,"n":"3048","st":19,"rw":2,"hex":"#92a44f","rgb":[146,164,79],"fam":"Green","tone":"Medium","h":72.8,"sat":45.5,"lum":59.5},{"s":536,"n":"4102","st":19,"rw":3,"hex":"#728d2b","rgb":[114,141,43],"fam":"Green","tone":"Medium","h":76.6,"sat":60.8,"lum":49.4},{"s":46,"n":"3049","st":19,"rw":4,"hex":"#728d32","rgb":[114,141,50],"fam":"Green","tone":"Medium","h":77.8,"sat":56.6,"lum":49.6},{"s":333,"n":"3527","st":19,"rw":5,"hex":"#657e33","rgb":[101,126,51],"fam":"Green","tone":"Medium","h":79.7,"sat":51.9,"lum":45.0},{"s":644,"n":"4388","st":19,"rw":6,"hex":"#56703a","rgb":[86,112,58],"fam":"Green","tone":"Medium","h":89.4,"sat":42.2,"lum":40.5},{"s":490,"n":"3935","st":19,"rw":7,"hex":"#749351","rgb":[116,147,81],"fam":"Green","tone":"Medium","h":88.5,"sat":39.6,"lum":52.5},{"s":199,"n":"3302","st":19,"rw":8,"hex":"#7d9860","rgb":[125,152,96],"fam":"Green","tone":"Medium","h":88.8,"sat":32.5,"lum":55.3},{"s":596,"n":"4264","st":19,"rw":9,"hex":"#5c8b62","rgb":[92,139,98],"fam":"Green","tone":"Medium","h":128.6,"sat":29.8,"lum":48.8},{"s":172,"n":"3245","st":19,"rw":10,"hex":"#549465","rgb":[84,148,101],"fam":"Green","tone":"Medium","h":135.8,"sat":38.0,"lum":50.3},{"s":489,"n":"3932","st":19,"rw":11,"hex":"#3f8341","rgb":[63,131,65],"fam":"Green","tone":"Medium","h":122.0,"sat":45.5,"lum":42.8},{"s":371,"n":"3663","st":19,"rw":12,"hex":"#3d6c43","rgb":[61,108,67],"fam":"Green","tone":"Medium","h":128.4,"sat":38.4,"lum":37.2},{"s":234,"n":"3369","st":19,"rw":13,"hex":"#37623a","rgb":[55,98,58],"fam":"Green","tone":"Dark","h":124.5,"sat":38.8,"lum":34.0},{"s":198,"n":"3301","st":19,"rw":14,"hex":"#32973f","rgb":[50,151,63],"fam":"Green","tone":"Medium","h":128.0,"sat":58.8,"lum":46.0},{"s":590,"n":"4238","st":19,"rw":15,"hex":"#299324","rgb":[41,147,36],"fam":"Green","tone":"Medium","h":117.0,"sat":66.4,"lum":43.0},{"s":537,"n":"4103","st":19,"rw":16,"hex":"#237a2f","rgb":[35,122,47],"fam":"Green","tone":"Medium","h":128.5,"sat":62.4,"lum":36.9},{"s":409,"n":"3753","st":19,"rw":17,"hex":"#05862f","rgb":[5,134,47],"fam":"Green","tone":"Medium","h":139.7,"sat":84.7,"lum":36.6},{"s":471,"n":"3895","st":19,"rw":18,"hex":"#0b7539","rgb":[11,117,57],"fam":"Green","tone":"Dark","h":145.6,"sat":79.3,"lum":33.7},{"s":176,"n":"3249","st":19,"rw":19,"hex":"#128e29","rgb":[18,142,41],"fam":"Green","tone":"Medium","h":130.9,"sat":76.4,"lum":39.5},{"s":174,"n":"3247","st":19,"rw":20,"hex":"#3b8a4c","rgb":[59,138,76],"fam":"Green","tone":"Medium","h":132.9,"sat":50.0,"lum":44.2},{"s":538,"n":"4104","st":19,"rw":21,"hex":"#1f6e38","rgb":[31,110,56],"fam":"Green","tone":"Dark","h":139.2,"sat":63.2,"lum":34.1},{"s":539,"n":"4105","st":19,"rw":22,"hex":"#176741","rgb":[23,103,65],"fam":"Green","tone":"Dark","h":152.1,"sat":68.2,"lum":31.9},{"s":235,"n":"3370","st":19,"rw":23,"hex":"#2b4f3d","rgb":[43,79,61],"fam":"Green","tone":"Dark","h":150.0,"sat":40.0,"lum":28.6},{"s":201,"n":"3304","st":19,"rw":24,"hex":"#325739","rgb":[50,87,57],"fam":"Green","tone":"Dark","h":130.6,"sat":37.0,"lum":30.8},{"s":84,"n":"3103","st":20,"rw":1,"hex":"#375d4b","rgb":[55,93,75],"fam":"Green","tone":"Dark","h":150.9,"sat":35.7,"lum":33.6},{"s":315,"n":"3470","st":20,"rw":2,"hex":"#3f5e4e","rgb":[63,94,78],"fam":"Green","tone":"Dark","h":149.0,"sat":29.3,"lum":34.8},{"s":255,"n":"3397","st":20,"rw":3,"hex":"#376655","rgb":[55,102,85],"fam":"Green","tone":"Dark","h":159.1,"sat":40.6,"lum":35.9},{"s":306,"n":"3453","st":20,"rw":4,"hex":"#31544a","rgb":[49,84,74],"fam":"Green","tone":"Dark","h":163.1,"sat":36.0,"lum":30.7},{"s":248,"n":"3390","st":20,"rw":5,"hex":"#2e4d48","rgb":[46,77,72],"fam":"Teal","tone":"Dark","h":169.7,"sat":34.9,"lum":28.9},{"s":191,"n":"3290","st":20,"rw":6,"hex":"#2e4c4d","rgb":[46,76,77],"fam":"Teal","tone":"Dark","h":182.1,"sat":34.9,"lum":28.9},{"s":200,"n":"3303","st":20,"rw":7,"hex":"#3b4b45","rgb":[59,75,69],"fam":"Green","tone":"Dark","h":156.0,"sat":18.5,"lum":29.7},{"s":302,"n":"3449","st":20,"rw":8,"hex":"#334d49","rgb":[51,77,73],"fam":"Teal","tone":"Dark","h":170.4,"sat":30.1,"lum":29.4},{"s":559,"n":"4156","st":20,"rw":9,"hex":"#325148","rgb":[50,81,72],"fam":"Green","tone":"Dark","h":161.4,"sat":33.3,"lum":30.3},{"s":369,"n":"3660","st":20,"rw":10,"hex":"#8e9560","rgb":[142,149,96],"fam":"Green","tone":"Medium","h":67.7,"sat":31.1,"lum":56.4},{"s":601,"n":"4280","st":20,"rw":11,"hex":"#949c62","rgb":[148,156,98],"fam":"Green","tone":"Medium","h":68.2,"sat":32.5,"lum":58.5},{"s":183,"n":"3260","st":20,"rw":12,"hex":"#a99d6a","rgb":[169,157,106],"fam":"Gold","tone":"Medium","h":48.2,"sat":32.9,"lum":61.6},{"s":86,"n":"3105","st":20,"rw":13,"hex":"#9c9456","rgb":[156,148,86],"fam":"Gold","tone":"Medium","h":53.2,"sat":39.5,"lum":57.2},{"s":156,"n":"3193","st":20,"rw":14,"hex":"#a99d44","rgb":[169,157,68],"fam":"Gold","tone":"Medium","h":52.6,"sat":52.4,"lum":60.2},{"s":633,"n":"4361","st":20,"rw":15,"hex":"#aead9a","rgb":[174,173,154],"fam":"Grey","tone":"Light","h":57.0,"sat":11.5,"lum":67.1},{"s":612,"n":"4308","st":20,"rw":16,"hex":"#a8a382","rgb":[168,163,130],"fam":"Gold","tone":"Medium","h":51.2,"sat":20.1,"lum":63.6},{"s":607,"n":"4300","st":20,"rw":17,"hex":"#aa9f76","rgb":[170,159,118],"fam":"Gold","tone":"Medium","h":47.0,"sat":26.9,"lum":62.7},{"s":261,"n":"3405","st":20,"rw":18,"hex":"#929370","rgb":[146,147,112],"fam":"Gold","tone":"Medium","h":61.9,"sat":20.8,"lum":56.9},{"s":202,"n":"3306","st":20,"rw":19,"hex":"#776f4f","rgb":[119,111,79],"fam":"Brown","tone":"Medium","h":48.3,"sat":29.5,"lum":44.6},{"s":286,"n":"3433","st":20,"rw":20,"hex":"#72804b","rgb":[114,128,75],"fam":"Green","tone":"Medium","h":76.2,"sat":36.6,"lum":47.7},{"s":640,"n":"4382","st":20,"rw":21,"hex":"#92824d","rgb":[146,130,77],"fam":"Gold","tone":"Medium","h":46.2,"sat":41.2,"lum":52.1},{"s":127,"n":"3157","st":20,"rw":22,"hex":"#836d40","rgb":[131,109,64],"fam":"Gold","tone":"Medium","h":40.0,"sat":44.8,"lum":45.3},{"s":632,"n":"4360","st":20,"rw":23,"hex":"#7b6d4a","rgb":[123,109,74],"fam":"Brown","tone":"Medium","h":43.6,"sat":34.9,"lum":44.7},{"s":87,"n":"3106","st":20,"rw":24,"hex":"#847821","rgb":[132,120,33],"fam":"Gold","tone":"Medium","h":52.6,"sat":65.9,"lum":46.4},{"s":113,"n":"3140","st":21,"rw":1,"hex":"#93943f","rgb":[147,148,63],"fam":"Gold","tone":"Medium","h":60.8,"sat":50.7,"lum":55.3},{"s":385,"n":"3714","st":21,"rw":2,"hex":"#939130","rgb":[147,145,48],"fam":"Gold","tone":"Medium","h":58.6,"sat":59.1,"lum":54.0},{"s":126,"n":"3156","st":21,"rw":3,"hex":"#9f9039","rgb":[159,144,57],"fam":"Gold","tone":"Medium","h":51.3,"sat":56.2,"lum":55.7},{"s":136,"n":"3170","st":21,"rw":4,"hex":"#82953b","rgb":[130,149,59],"fam":"Green","tone":"Medium","h":72.7,"sat":53.0,"lum":53.6},{"s":10,"n":"3010","st":21,"rw":5,"hex":"#c0c1b1","rgb":[192,193,177],"fam":"Grey","tone":"Light","h":63.8,"sat":8.3,"lum":74.5},{"s":631,"n":"4359","st":21,"rw":6,"hex":"#afb4a0","rgb":[175,180,160],"fam":"Grey","tone":"Light","h":75.0,"sat":11.1,"lum":69.1},{"s":527,"n":"4081","st":21,"rw":7,"hex":"#a4a78f","rgb":[164,167,143],"fam":"Grey","tone":"Medium","h":68.6,"sat":12.5,"lum":64.6},{"s":216,"n":"3337","st":21,"rw":8,"hex":"#adaa8e","rgb":[173,170,142],"fam":"Gold","tone":"Light","h":55.6,"sat":15.6,"lum":66.2},{"s":161,"n":"3227","st":21,"rw":9,"hex":"#a3b1a4","rgb":[163,177,164],"fam":"Grey","tone":"Light","h":124.3,"sat":7.9,"lum":67.2},{"s":566,"n":"4193","st":21,"rw":10,"hex":"#a8ad99","rgb":[168,173,153],"fam":"Grey","tone":"Light","h":75.0,"sat":11.6,"lum":66.4},{"s":575,"n":"4208","st":21,"rw":11,"hex":"#84946f","rgb":[132,148,111],"fam":"Green","tone":"Medium","h":85.5,"sat":22.0,"lum":55.7},{"s":82,"n":"3098","st":21,"rw":12,"hex":"#729372","rgb":[114,147,114],"fam":"Green","tone":"Medium","h":120.0,"sat":19.5,"lum":53.7},{"s":595,"n":"4260","st":21,"rw":13,"hex":"#7a9877","rgb":[122,152,119],"fam":"Green","tone":"Medium","h":114.0,"sat":19.5,"lum":55.9},{"s":249,"n":"3391","st":21,"rw":14,"hex":"#4e7552","rgb":[78,117,82],"fam":"Green","tone":"Medium","h":126.7,"sat":29.8,"lum":41.8},{"s":250,"n":"3392","st":21,"rw":15,"hex":"#859579","rgb":[133,149,121],"fam":"Grey","tone":"Medium","h":93.6,"sat":16.6,"lum":56.5},{"s":256,"n":"3400","st":21,"rw":16,"hex":"#678b6e","rgb":[103,139,110],"fam":"Green","tone":"Medium","h":131.2,"sat":22.7,"lum":50.4},{"s":379,"n":"3701","st":21,"rw":17,"hex":"#4f6e42","rgb":[79,110,66],"fam":"Green","tone":"Medium","h":102.0,"sat":35.1,"lum":39.6},{"s":642,"n":"4386","st":21,"rw":18,"hex":"#697e41","rgb":[105,126,65],"fam":"Green","tone":"Medium","h":80.7,"sat":42.6,"lum":45.9},{"s":376,"n":"3686","st":21,"rw":19,"hex":"#71774a","rgb":[113,119,74],"fam":"Green","tone":"Medium","h":67.5,"sat":32.8,"lum":45.5},{"s":252,"n":"3394","st":21,"rw":20,"hex":"#6c6e43","rgb":[108,110,67],"fam":"Brown","tone":"Medium","h":63.1,"sat":34.2,"lum":42.7},{"s":364,"n":"3641","st":21,"rw":21,"hex":"#93906b","rgb":[147,144,107],"fam":"Gold","tone":"Medium","h":55.0,"sat":24.2,"lum":56.1},{"s":646,"n":"4410","st":21,"rw":22,"hex":"#787d54","rgb":[120,125,84],"fam":"Green","tone":"Medium","h":66.5,"sat":28.9,"lum":48.1},{"s":254,"n":"3396","st":21,"rw":23,"hex":"#5c6647","rgb":[92,102,71],"fam":"Green","tone":"Medium","h":79.3,"sat":26.4,"lum":39.3},{"s":287,"n":"3434","st":21,"rw":24,"hex":"#4d482c","rgb":[77,72,44],"fam":"Gold","tone":"Dark","h":50.3,"sat":37.3,"lum":30.0},{"s":251,"n":"3393","st":22,"rw":1,"hex":"#465248","rgb":[70,82,72],"fam":"Grey","tone":"Dark","h":130.0,"sat":13.6,"lum":32.7},{"s":253,"n":"3395","st":22,"rw":2,"hex":"#3d4b44","rgb":[61,75,68],"fam":"Grey","tone":"Dark","h":147.7,"sat":16.0,"lum":29.9},{"s":225,"n":"3357","st":22,"rw":3,"hex":"#3c493f","rgb":[60,73,63],"fam":"Grey","tone":"Dark","h":135.0,"sat":15.2,"lum":29.2},{"s":602,"n":"4285","st":22,"rw":4,"hex":"#3d4941","rgb":[61,73,65],"fam":"Grey","tone":"Dark","h":136.4,"sat":13.9,"lum":29.3},{"s":342,"n":"3559","st":22,"rw":5,"hex":"#d3cfc6","rgb":[211,207,198],"fam":"White","tone":"Light","h":41.5,"sat":6.2,"lum":80.5},{"s":561,"n":"4171","st":22,"rw":6,"hex":"#ccc9c0","rgb":[204,201,192],"fam":"White","tone":"Light","h":45.0,"sat":5.9,"lum":78.4},{"s":686,"n":"4547","st":22,"rw":7,"hex":"#c2c2b6","rgb":[194,194,182],"fam":"Grey","tone":"Light","h":60.0,"sat":6.2,"lum":75.1},{"s":344,"n":"3563","st":22,"rw":8,"hex":"#c3bdaf","rgb":[195,189,175],"fam":"Grey","tone":"Light","h":42.0,"sat":10.3,"lum":73.8},{"s":672,"n":"4490","st":22,"rw":9,"hex":"#b1ada2","rgb":[177,173,162],"fam":"Grey","tone":"Light","h":44.0,"sat":8.5,"lum":67.8},{"s":674,"n":"4500","st":22,"rw":10,"hex":"#b2b2a7","rgb":[178,178,167],"fam":"Grey","tone":"Light","h":60.0,"sat":6.2,"lum":69.3},{"s":343,"n":"3560","st":22,"rw":11,"hex":"#cac6ba","rgb":[202,198,186],"fam":"White","tone":"Light","h":45.0,"sat":8.0,"lum":77.2},{"s":340,"n":"3555","st":22,"rw":12,"hex":"#b3ad9f","rgb":[179,173,159],"fam":"Grey","tone":"Light","h":42.0,"sat":11.2,"lum":67.9},{"s":292,"n":"3439","st":22,"rw":13,"hex":"#b4b1a2","rgb":[180,177,162],"fam":"Grey","tone":"Light","h":50.0,"sat":10.0,"lum":69.1},{"s":481,"n":"3922","st":22,"rw":14,"hex":"#aea89c","rgb":[174,168,156],"fam":"Grey","tone":"Light","h":40.0,"sat":10.3,"lum":66.0},{"s":73,"n":"3085","st":22,"rw":15,"hex":"#b8b2a2","rgb":[184,178,162],"fam":"Grey","tone":"Light","h":43.6,"sat":12.0,"lum":69.8},{"s":74,"n":"3087","st":22,"rw":16,"hex":"#b7b4a4","rgb":[183,180,164],"fam":"Grey","tone":"Light","h":50.5,"sat":10.4,"lum":70.2},{"s":485,"n":"3928","st":22,"rw":17,"hex":"#95998d","rgb":[149,153,141],"fam":"Grey","tone":"Medium","h":83.1,"sat":8.4,"lum":59.6},{"s":63,"n":"3069","st":22,"rw":18,"hex":"#a5aaa3","rgb":[165,170,163],"fam":"Grey","tone":"Light","h":102.9,"sat":4.1,"lum":66.2},{"s":634,"n":"4362","st":22,"rw":19,"hex":"#928f8a","rgb":[146,143,138],"fam":"Grey","tone":"Medium","h":37.5,"sat":5.4,"lum":57.0},{"s":679,"n":"4513","st":22,"rw":20,"hex":"#a89f9a","rgb":[168,159,154],"fam":"Grey","tone":"Medium","h":21.4,"sat":8.3,"lum":63.6},{"s":665,"n":"4470","st":22,"rw":21,"hex":"#9c958c","rgb":[156,149,140],"fam":"Grey","tone":"Medium","h":33.7,"sat":10.2,"lum":59.2},{"s":680,"n":"4518","st":22,"rw":22,"hex":"#9d948b","rgb":[157,148,139],"fam":"Grey","tone":"Medium","h":30.0,"sat":11.4,"lum":59.1},{"s":11,"n":"3011","st":22,"rw":23,"hex":"#9c9a8e","rgb":[156,154,142],"fam":"Grey","tone":"Medium","h":51.4,"sat":8.9,"lum":60.5},{"s":95,"n":"3118","st":22,"rw":24,"hex":"#8d8884","rgb":[141,136,132],"fam":"Grey","tone":"Medium","h":26.7,"sat":6.3,"lum":54.5},{"s":58,"n":"3063","st":23,"rw":1,"hex":"#7a7068","rgb":[122,112,104],"fam":"Grey","tone":"Medium","h":26.3,"sat":12.8,"lum":46.2},{"s":37,"n":"3040","st":23,"rw":2,"hex":"#7a7568","rgb":[122,117,104],"fam":"Grey","tone":"Medium","h":45.0,"sat":12.8,"lum":47.4},{"s":324,"n":"3490","st":23,"rw":3,"hex":"#5d5355","rgb":[93,83,85],"fam":"Grey","tone":"Dark","h":349.1,"sat":11.2,"lum":35.5},{"s":714,"n":"4596","st":23,"rw":4,"hex":"#847169","rgb":[132,113,105],"fam":"Brown","tone":"Medium","h":17.5,"sat":17.8,"lum":48.0},{"s":587,"n":"4229","st":23,"rw":5,"hex":"#86806e","rgb":[134,128,110],"fam":"Brown","tone":"Medium","h":43.6,"sat":16.1,"lum":51.4},{"s":320,"n":"3479","st":23,"rw":6,"hex":"#645b55","rgb":[100,91,85],"fam":"Brown","tone":"Medium","h":21.4,"sat":13.3,"lum":38.5},{"s":355,"n":"3623","st":23,"rw":7,"hex":"#635a58","rgb":[99,90,88],"fam":"Grey","tone":"Medium","h":10.0,"sat":11.5,"lum":37.9},{"s":339,"n":"3553","st":23,"rw":8,"hex":"#afb3b2","rgb":[175,179,178],"fam":"Grey","tone":"Light","h":165.0,"sat":2.2,"lum":69.7},{"s":338,"n":"3552","st":23,"rw":9,"hex":"#b5b9b3","rgb":[181,185,179],"fam":"Grey","tone":"Light","h":100.0,"sat":3.2,"lum":71.8},{"s":313,"n":"3464","st":23,"rw":10,"hex":"#9ca1a6","rgb":[156,161,166],"fam":"Grey","tone":"Medium","h":210.0,"sat":6.0,"lum":63.2},{"s":688,"n":"4550","st":23,"rw":11,"hex":"#979d9b","rgb":[151,157,155],"fam":"Grey","tone":"Medium","h":160.0,"sat":3.8,"lum":61.2},{"s":12,"n":"3012","st":23,"rw":12,"hex":"#8f9998","rgb":[143,153,152],"fam":"Grey","tone":"Medium","h":174.5,"sat":7.1,"lum":59.4},{"s":312,"n":"3463","st":23,"rw":13,"hex":"#516061","rgb":[81,96,97],"fam":"Grey","tone":"Medium","h":184.0,"sat":14.7,"lum":38.0},{"s":357,"n":"3626","st":23,"rw":14,"hex":"#656668","rgb":[101,102,104],"fam":"Grey","tone":"Medium","h":220.0,"sat":2.8,"lum":41.5},{"s":57,"n":"3062","st":23,"rw":15,"hex":"#8a836b","rgb":[138,131,107],"fam":"Brown","tone":"Medium","h":46.7,"sat":19.3,"lum":52.3},{"s":167,"n":"3240","st":23,"rw":16,"hex":"#5b5b4e","rgb":[91,91,78],"fam":"Grey","tone":"Medium","h":60.0,"sat":12.5,"lum":37.1},{"s":689,"n":"4551","st":23,"rw":17,"hex":"#6a6f68","rgb":[106,111,104],"fam":"Grey","tone":"Medium","h":102.9,"sat":6.1,"lum":44.2},{"s":673,"n":"4496","st":23,"rw":18,"hex":"#72746e","rgb":[114,116,110],"fam":"Grey","tone":"Medium","h":77.1,"sat":5.8,"lum":46.5},{"s":289,"n":"3436","st":23,"rw":19,"hex":"#6f6b5d","rgb":[111,107,93],"fam":"Brown","tone":"Medium","h":45.0,"sat":13.9,"lum":43.5},{"s":400,"n":"3739","st":23,"rw":20,"hex":"#5e574c","rgb":[94,87,76],"fam":"Brown","tone":"Medium","h":35.3,"sat":17.2,"lum":36.5},{"s":609,"n":"4303","st":23,"rw":21,"hex":"#8a7e68","rgb":[138,126,104],"fam":"Brown","tone":"Medium","h":40.0,"sat":21.4,"lum":51.3},{"s":189,"n":"3288","st":23,"rw":22,"hex":"#5d5553","rgb":[93,85,83],"fam":"Grey","tone":"Medium","h":16.4,"sat":11.2,"lum":36.1},{"s":311,"n":"3462","st":23,"rw":23,"hex":"#595353","rgb":[89,83,83],"fam":"Grey","tone":"Dark","h":0.0,"sat":6.4,"lum":35.2},{"s":410,"n":"3754","st":23,"rw":24,"hex":"#47464b","rgb":[71,70,75],"fam":"Grey","tone":"Dark","h":252.0,"sat":6.2,"lum":30.1},{"s":334,"n":"3531","st":24,"rw":1,"hex":"#545557","rgb":[84,85,87],"fam":"Grey","tone":"Dark","h":220.0,"sat":3.3,"lum":35.3},{"s":705,"n":"4583","st":24,"rw":2,"hex":"#40423e","rgb":[64,66,62],"fam":"Grey","tone":"Dark","h":90.0,"sat":5.6,"lum":27.8},{"s":603,"n":"4286","st":24,"rw":3,"hex":"#42413c","rgb":[66,65,60],"fam":"Grey","tone":"Dark","h":50.0,"sat":8.3,"lum":27.7},{"s":429,"n":"3792","st":24,"rw":4,"hex":"#3f4246","rgb":[63,66,70],"fam":"Grey","tone":"Dark","h":214.3,"sat":9.2,"lum":28.1},{"s":377,"n":"3694","st":24,"rw":5,"hex":"#434345","rgb":[67,67,69],"fam":"Grey","tone":"Dark","h":240.0,"sat":2.7,"lum":28.7},{"s":374,"n":"3676","st":24,"rw":6,"hex":"#574c4a","rgb":[87,76,74],"fam":"Brown","tone":"Dark","h":10.0,"sat":13.0,"lum":33.2},{"s":639,"n":"4381","st":24,"rw":7,"hex":"#6f6a67","rgb":[111,106,103],"fam":"Grey","tone":"Medium","h":22.5,"sat":7.0,"lum":43.6},{"s":488,"n":"3931","st":24,"rw":8,"hex":"#64696a","rgb":[100,105,106],"fam":"Grey","tone":"Medium","h":190.0,"sat":5.5,"lum":42.2},{"s":329,"n":"3512","st":24,"rw":9,"hex":"#72726b","rgb":[114,114,107],"fam":"Grey","tone":"Medium","h":60.0,"sat":6.8,"lum":45.9},{"s":677,"n":"4506","st":24,"rw":10,"hex":"#6a6c61","rgb":[106,108,97],"fam":"Grey","tone":"Medium","h":70.9,"sat":9.8,"lum":43.2},{"s":500,"n":"3963","st":24,"rw":11,"hex":"#6a736c","rgb":[106,115,108],"fam":"Grey","tone":"Medium","h":132.0,"sat":8.4,"lum":45.1},{"s":681,"n":"4524","st":24,"rw":12,"hex":"#6c7771","rgb":[108,119,113],"fam":"Grey","tone":"Medium","h":147.3,"sat":9.0,"lum":46.3},{"s":322,"n":"3487","st":24,"rw":13,"hex":"#6d7f74","rgb":[109,127,116],"fam":"Grey","tone":"Medium","h":142.5,"sat":12.3,"lum":48.7},{"s":687,"n":"4548","st":24,"rw":14,"hex":"#718a81","rgb":[113,138,129],"fam":"Grey","tone":"Medium","h":158.2,"sat":15.7,"lum":52.0},{"s":133,"n":"3163","st":24,"rw":15,"hex":"#6b8083","rgb":[107,128,131],"fam":"Grey","tone":"Medium","h":188.2,"sat":16.4,"lum":49.3},{"s":472,"n":"3904","st":24,"rw":16,"hex":"#8f918c","rgb":[143,145,140],"fam":"Grey","tone":"Medium","h":84.0,"sat":3.4,"lum":57.2},{"s":462,"n":"3876","st":24,"rw":17,"hex":"#949587","rgb":[148,149,135],"fam":"Grey","tone":"Medium","h":64.3,"sat":9.3,"lum":58.5},{"s":495,"n":"3943","st":24,"rw":18,"hex":"#6c6262","rgb":[108,98,98],"fam":"Grey","tone":"Medium","h":0.0,"sat":8.9,"lum":41.2},{"s":207,"n":"3318","st":24,"rw":19,"hex":"#4a484e","rgb":[74,72,78],"fam":"Grey","tone":"Dark","h":257.1,"sat":8.3,"lum":30.7},{"s":563,"n":"4185","st":24,"rw":20,"hex":"#46464c","rgb":[70,70,76],"fam":"Grey","tone":"Dark","h":240.0,"sat":8.5,"lum":29.7},{"s":678,"n":"4509","st":24,"rw":21,"hex":"#323b42","rgb":[50,59,66],"fam":"Blue","tone":"Dark","h":204.0,"sat":20.8,"lum":25.1},{"s":635,"n":"4365","st":24,"rw":22,"hex":"#64696f","rgb":[100,105,111],"fam":"Grey","tone":"Medium","h":212.7,"sat":9.6,"lum":42.4},{"s":478,"n":"3917","st":24,"rw":23,"hex":"#8c9698","rgb":[140,150,152],"fam":"Grey","tone":"Medium","h":189.2,"sat":8.4,"lum":58.4},{"s":228,"n":"3360","st":24,"rw":24,"hex":"#50656e","rgb":[80,101,110],"fam":"Teal","tone":"Medium","h":197.8,"sat":23.7,"lum":39.7},{"s":691,"n":"4556","st":25,"rw":1,"hex":"#5d7f92","rgb":[93,127,146],"fam":"Blue","tone":"Medium","h":201.7,"sat":31.8,"lum":48.6},{"s":676,"n":"4504","st":25,"rw":2,"hex":"#466783","rgb":[70,103,131],"fam":"Blue","tone":"Medium","h":207.3,"sat":41.0,"lum":40.3},{"s":399,"n":"3737","st":25,"rw":3,"hex":"#4a5d70","rgb":[74,93,112],"fam":"Blue","tone":"Medium","h":209.1,"sat":30.2,"lum":37.5},{"s":480,"n":"3921","st":25,"rw":4,"hex":"#50637a","rgb":[80,99,122],"fam":"Blue","tone":"Medium","h":211.6,"sat":30.4,"lum":40.0},{"s":232,"n":"3364","st":25,"rw":5,"hex":"#34445b","rgb":[52,68,91],"fam":"Blue","tone":"Dark","h":215.0,"sat":37.5,"lum":28.6},{"s":348,"n":"3604","st":25,"rw":6,"hex":"#364552","rgb":[54,69,82],"fam":"Blue","tone":"Dark","h":208.9,"sat":30.7,"lum":28.4},{"s":630,"n":"4358","st":25,"rw":7,"hex":"#485452","rgb":[72,84,82],"fam":"Grey","tone":"Dark","h":174.5,"sat":12.4,"lum":33.6},{"s":359,"n":"3628","st":25,"rw":8,"hex":"#344246","rgb":[52,66,70],"fam":"Teal","tone":"Dark","h":194.1,"sat":22.4,"lum":26.9},{"s":38,"n":"3041","st":25,"rw":9,"hex":"#4a5658","rgb":[74,86,88],"fam":"Grey","tone":"Dark","h":189.2,"sat":14.0,"lum":34.5},{"s":291,"n":"3438","st":25,"rw":10,"hex":"#4d5b5e","rgb":[77,91,94],"fam":"Grey","tone":"Medium","h":191.2,"sat":16.2,"lum":36.3},{"s":586,"n":"4227","st":25,"rw":11,"hex":"#4a585a","rgb":[74,88,90],"fam":"Grey","tone":"Dark","h":188.0,"sat":15.8,"lum":35.0},{"s":331,"n":"3520","st":25,"rw":12,"hex":"#414c56","rgb":[65,76,86],"fam":"Blue","tone":"Dark","h":208.4,"sat":20.9,"lum":31.4},{"s":484,"n":"3927","st":25,"rw":13,"hex":"#545b5d","rgb":[84,91,93],"fam":"Grey","tone":"Medium","h":192.0,"sat":10.2,"lum":36.8},{"s":482,"n":"3925","st":25,"rw":14,"hex":"#5e6363","rgb":[94,99,99],"fam":"Grey","tone":"Medium","h":180.0,"sat":5.8,"lum":40.1},{"s":425,"n":"3784","st":25,"rw":15,"hex":"#414d52","rgb":[65,77,82],"fam":"Teal","tone":"Dark","h":198.8,"sat":18.2,"lum":31.5},{"s":453,"n":"3866","st":25,"rw":16,"hex":"#4d5356","rgb":[77,83,86],"fam":"Grey","tone":"Dark","h":200.0,"sat":9.9,"lum":33.9},{"s":290,"n":"3437","st":25,"rw":17,"hex":"#5d6969","rgb":[93,105,105],"fam":"Grey","tone":"Medium","h":180.0,"sat":11.0,"lum":41.3},{"s":229,"n":"3361","st":25,"rw":18,"hex":"#515956","rgb":[81,89,86],"fam":"Grey","tone":"Dark","h":157.5,"sat":8.5,"lum":35.8},{"s":690,"n":"4553","st":25,"rw":19,"hex":"#544f51","rgb":[84,79,81],"fam":"Grey","tone":"Dark","h":336.0,"sat":5.6,"lum":33.6},{"s":231,"n":"3363","st":25,"rw":20,"hex":"#676268","rgb":[103,98,104],"fam":"Grey","tone":"Medium","h":290.0,"sat":5.6,"lum":40.9},{"s":168,"n":"3241","st":25,"rw":21,"hex":"#353c43","rgb":[53,60,67],"fam":"Grey","tone":"Dark","h":207.7,"sat":17.8,"lum":25.7},{"s":310,"n":"3461","st":25,"rw":22,"hex":"#4c5354","rgb":[76,83,84],"fam":"Grey","tone":"Dark","h":187.5,"sat":9.0,"lum":33.7},{"s":130,"n":"3160","st":25,"rw":23,"hex":"#427073","rgb":[66,112,115],"fam":"Teal","tone":"Medium","h":184.0,"sat":37.8,"lum":40.7},{"s":131,"n":"3161","st":25,"rw":24,"hex":"#3f6263","rgb":[63,98,99],"fam":"Teal","tone":"Medium","h":181.8,"sat":31.7,"lum":36.7},{"s":132,"n":"3162","st":26,"rw":1,"hex":"#2f5a62","rgb":[47,90,98],"fam":"Teal","tone":"Dark","h":190.2,"sat":45.6,"lum":33.0},{"s":378,"n":"3700","st":26,"rw":2,"hex":"#c7b58f","rgb":[199,181,143],"fam":"Cream","tone":"Light","h":40.4,"sat":24.7,"lum":71.8},{"s":486,"n":"3929","st":26,"rw":3,"hex":"#afa187","rgb":[175,161,135],"fam":"Gold","tone":"Medium","h":39.4,"sat":20.0,"lum":64.3},{"s":71,"n":"3082","st":26,"rw":4,"hex":"#b3a58b","rgb":[179,165,139],"fam":"Gold","tone":"Medium","h":39.4,"sat":19.6,"lum":65.9},{"s":625,"n":"4341","st":26,"rw":5,"hex":"#c6b5a4","rgb":[198,181,164],"fam":"Cream","tone":"Light","h":30.0,"sat":15.2,"lum":72.5},{"s":345,"n":"3565","st":26,"rw":6,"hex":"#c0b2a5","rgb":[192,178,165],"fam":"Grey","tone":"Light","h":28.7,"sat":12.0,"lum":71.1},{"s":483,"n":"3926","st":26,"rw":7,"hex":"#bcae98","rgb":[188,174,152],"fam":"Cream","tone":"Light","h":35.6,"sat":17.0,"lum":69.3},{"s":103,"n":"3127","st":26,"rw":8,"hex":"#c8b79e","rgb":[200,183,158],"fam":"Cream","tone":"Light","h":35.7,"sat":18.6,"lum":72.9},{"s":610,"n":"4304","st":26,"rw":9,"hex":"#ac926d","rgb":[172,146,109],"fam":"Brown","tone":"Medium","h":36.0,"sat":32.0,"lum":59.9},{"s":220,"n":"3342","st":26,"rw":10,"hex":"#c1a381","rgb":[193,163,129],"fam":"Cream","tone":"Light","h":32.1,"sat":29.2,"lum":66.8},{"s":296,"n":"3443","st":26,"rw":11,"hex":"#c4a87b","rgb":[196,168,123],"fam":"Cream","tone":"Light","h":37.5,"sat":32.8,"lum":68.1},{"s":386,"n":"3715","st":26,"rw":12,"hex":"#b88e5e","rgb":[184,142,94],"fam":"Orange","tone":"Medium","h":31.9,"sat":42.9,"lum":60.1},{"s":611,"n":"4305","st":26,"rw":13,"hex":"#b2aa88","rgb":[178,170,136],"fam":"Gold","tone":"Light","h":48.6,"sat":20.8,"lum":66.5},{"s":554,"n":"4141","st":26,"rw":14,"hex":"#bcb690","rgb":[188,182,144],"fam":"Cream","tone":"Light","h":50.8,"sat":20.7,"lum":70.6},{"s":337,"n":"3551","st":26,"rw":15,"hex":"#bbaf88","rgb":[187,175,136],"fam":"Gold","tone":"Light","h":45.3,"sat":24.1,"lum":68.8},{"s":579,"n":"4213","st":26,"rw":16,"hex":"#b7a97e","rgb":[183,169,126],"fam":"Gold","tone":"Light","h":45.6,"sat":27.3,"lum":66.8},{"s":72,"n":"3084","st":26,"rw":17,"hex":"#bcac8b","rgb":[188,172,139],"fam":"Gold","tone":"Light","h":40.5,"sat":22.9,"lum":68.6},{"s":264,"n":"3408","st":26,"rw":18,"hex":"#c3b288","rgb":[195,178,136],"fam":"Cream","tone":"Light","h":42.4,"sat":26.3,"lum":70.3},{"s":50,"n":"3055","st":26,"rw":19,"hex":"#b7a067","rgb":[183,160,103],"fam":"Gold","tone":"Medium","h":42.9,"sat":38.3,"lum":64.0},{"s":179,"n":"3255","st":26,"rw":20,"hex":"#c4a76c","rgb":[196,167,108],"fam":"Gold","tone":"Light","h":40.5,"sat":39.5,"lum":67.3},{"s":396,"n":"3732","st":26,"rw":21,"hex":"#bea168","rgb":[190,161,104],"fam":"Gold","tone":"Medium","h":40.0,"sat":39.7,"lum":65.0},{"s":700,"n":"4575","st":26,"rw":22,"hex":"#c5a681","rgb":[197,166,129],"fam":"Cream","tone":"Light","h":32.5,"sat":30.1,"lum":68.0},{"s":570,"n":"4197","st":26,"rw":23,"hex":"#c09b74","rgb":[192,155,116],"fam":"Brown","tone":"Medium","h":30.9,"sat":34.6,"lum":64.6},{"s":266,"n":"3410","st":26,"rw":24,"hex":"#b98659","rgb":[185,134,89],"fam":"Orange","tone":"Medium","h":27.9,"sat":45.4,"lum":58.4},{"s":683,"n":"4541","st":27,"rw":1,"hex":"#ae8d6c","rgb":[174,141,108],"fam":"Brown","tone":"Medium","h":30.0,"sat":33.3,"lum":59.0},{"s":353,"n":"3616","st":27,"rw":2,"hex":"#bb997a","rgb":[187,153,122],"fam":"Brown","tone":"Medium","h":28.4,"sat":30.5,"lum":63.9},{"s":102,"n":"3126","st":27,"rw":3,"hex":"#b4966a","rgb":[180,150,106],"fam":"Brown","tone":"Medium","h":36.0,"sat":36.1,"lum":61.7},{"s":682,"n":"4539","st":27,"rw":4,"hex":"#c3b294","rgb":[195,178,148],"fam":"Cream","tone":"Light","h":38.0,"sat":21.1,"lum":70.8},{"s":529,"n":"4083","st":27,"rw":5,"hex":"#b89c71","rgb":[184,156,113],"fam":"Brown","tone":"Medium","h":35.8,"sat":33.7,"lum":63.6},{"s":487,"n":"3930","st":27,"rw":6,"hex":"#a58d6a","rgb":[165,141,106],"fam":"Brown","tone":"Medium","h":35.8,"sat":31.3,"lum":57.9},{"s":114,"n":"3142","st":27,"rw":7,"hex":"#ad8d6c","rgb":[173,141,108],"fam":"Brown","tone":"Medium","h":30.5,"sat":32.9,"lum":58.8},{"s":541,"n":"4111","st":27,"rw":8,"hex":"#c6b18c","rgb":[198,177,140],"fam":"Cream","tone":"Light","h":38.8,"sat":25.9,"lum":70.8},{"s":636,"n":"4369","st":27,"rw":9,"hex":"#b19a87","rgb":[177,154,135],"fam":"Brown","tone":"Medium","h":27.6,"sat":20.9,"lum":63.2},{"s":328,"n":"3504","st":27,"rw":10,"hex":"#a89481","rgb":[168,148,129],"fam":"Brown","tone":"Medium","h":29.1,"sat":20.7,"lum":60.6},{"s":327,"n":"3500","st":27,"rw":11,"hex":"#a5817a","rgb":[165,129,122],"fam":"Red","tone":"Medium","h":9.5,"sat":22.9,"lum":56.0},{"s":314,"n":"3468","st":27,"rw":12,"hex":"#734c4e","rgb":[115,76,78],"fam":"Brown","tone":"Medium","h":356.7,"sat":30.3,"lum":36.9},{"s":356,"n":"3624","st":27,"rw":13,"hex":"#9b7a4a","rgb":[155,122,74],"fam":"Orange","tone":"Medium","h":35.5,"sat":45.5,"lum":51.3},{"s":308,"n":"3457","st":27,"rw":14,"hex":"#b0914c","rgb":[176,145,76],"fam":"Gold","tone":"Medium","h":41.6,"sat":50.0,"lum":58.9},{"s":180,"n":"3256","st":27,"rw":15,"hex":"#a5813b","rgb":[165,129,59],"fam":"Gold","tone":"Medium","h":39.6,"sat":56.6,"lum":53.5},{"s":555,"n":"4142","st":27,"rw":16,"hex":"#af8848","rgb":[175,136,72],"fam":"Orange","tone":"Medium","h":37.3,"sat":51.4,"lum":56.8},{"s":597,"n":"4267","st":27,"rw":17,"hex":"#cea158","rgb":[206,161,88],"fam":"Orange","tone":"Light","h":36.7,"sat":50.2,"lum":66.6},{"s":583,"n":"4220","st":27,"rw":18,"hex":"#bb7b27","rgb":[187,123,39],"fam":"Orange","tone":"Medium","h":34.2,"sat":69.5,"lum":54.6},{"s":138,"n":"3173","st":27,"rw":19,"hex":"#b68237","rgb":[182,130,55],"fam":"Orange","tone":"Medium","h":35.1,"sat":61.0,"lum":55.8},{"s":401,"n":"3741","st":27,"rw":20,"hex":"#b77b2c","rgb":[183,123,44],"fam":"Orange","tone":"Medium","h":33.9,"sat":66.7,"lum":54.1},{"s":456,"n":"3870","st":27,"rw":21,"hex":"#ba8a45","rgb":[186,138,69],"fam":"Orange","tone":"Medium","h":35.5,"sat":55.4,"lum":58.7},{"s":181,"n":"3257","st":27,"rw":22,"hex":"#aa5727","rgb":[170,87,39],"fam":"Brown","tone":"Medium","h":22.2,"sat":67.8,"lum":45.1},{"s":272,"n":"3417","st":27,"rw":23,"hex":"#9e4c1b","rgb":[158,76,27],"fam":"Brown","tone":"Medium","h":22.8,"sat":73.0,"lum":40.6},{"s":177,"n":"3253","st":27,"rw":24,"hex":"#954d28","rgb":[149,77,40],"fam":"Brown","tone":"Medium","h":20.4,"sat":64.2,"lum":40.1},{"s":449,"n":"3840","st":28,"rw":1,"hex":"#bc9e7f","rgb":[188,158,127],"fam":"Brown","tone":"Medium","h":30.0,"sat":28.7,"lum":65.1},{"s":648,"n":"4414","st":28,"rw":2,"hex":"#ba8860","rgb":[186,136,96],"fam":"Orange","tone":"Medium","h":26.6,"sat":42.5,"lum":59.3},{"s":51,"n":"3056","st":28,"rw":3,"hex":"#c39268","rgb":[195,146,104],"fam":"Brown","tone":"Medium","h":27.3,"sat":40.7,"lum":62.6},{"s":560,"n":"4161","st":28,"rw":4,"hex":"#b98a55","rgb":[185,138,85],"fam":"Orange","tone":"Medium","h":32.0,"sat":47.6,"lum":59.2},{"s":273,"n":"3418","st":28,"rw":5,"hex":"#a37a56","rgb":[163,122,86],"fam":"Brown","tone":"Medium","h":28.2,"sat":41.5,"lum":53.0},{"s":576,"n":"4209","st":28,"rw":6,"hex":"#94715a","rgb":[148,113,90],"fam":"Brown","tone":"Medium","h":24.2,"sat":34.7,"lum":49.4},{"s":657,"n":"4441","st":28,"rw":7,"hex":"#80633f","rgb":[128,99,63],"fam":"Brown","tone":"Medium","h":33.1,"sat":44.3,"lum":42.8},{"s":706,"n":"4585","st":28,"rw":8,"hex":"#7b6343","rgb":[123,99,67],"fam":"Brown","tone":"Medium","h":34.8,"sat":39.7,"lum":42.3},{"s":326,"n":"3497","st":28,"rw":9,"hex":"#79694a","rgb":[121,105,74],"fam":"Brown","tone":"Medium","h":40.0,"sat":33.9,"lum":43.5},{"s":384,"n":"3711","st":28,"rw":10,"hex":"#615139","rgb":[97,81,57],"fam":"Brown","tone":"Dark","h":35.7,"sat":36.3,"lum":34.9},{"s":474,"n":"3907","st":28,"rw":11,"hex":"#6d5f53","rgb":[109,95,83],"fam":"Brown","tone":"Medium","h":27.5,"sat":21.2,"lum":40.2},{"s":556,"n":"4143","st":28,"rw":12,"hex":"#746351","rgb":[116,99,81],"fam":"Brown","tone":"Medium","h":30.0,"sat":26.7,"lum":41.9},{"s":166,"n":"3239","st":28,"rw":13,"hex":"#55453b","rgb":[85,69,59],"fam":"Brown","tone":"Dark","h":22.5,"sat":26.7,"lum":30.8},{"s":581,"n":"4215","st":28,"rw":14,"hex":"#8e5a40","rgb":[142,90,64],"fam":"Brown","tone":"Medium","h":20.0,"sat":47.9,"lum":42.8},{"s":496,"n":"3948","st":28,"rw":15,"hex":"#b98665","rgb":[185,134,101],"fam":"Brown","tone":"Medium","h":23.5,"sat":40.0,"lum":58.9},{"s":20,"n":"3021","st":28,"rw":16,"hex":"#c5683e","rgb":[197,104,62],"fam":"Orange","tone":"Medium","h":18.8,"sat":60.2,"lum":52.9},{"s":325,"n":"3495","st":28,"rw":17,"hex":"#ba7059","rgb":[186,112,89],"fam":"Orange","tone":"Medium","h":14.1,"sat":45.7,"lum":54.2},{"s":182,"n":"3258","st":28,"rw":18,"hex":"#994e32","rgb":[153,78,50],"fam":"Brown","tone":"Medium","h":16.3,"sat":59.4,"lum":41.2},{"s":531,"n":"4086","st":28,"rw":19,"hex":"#9e5a3e","rgb":[158,90,62],"fam":"Brown","tone":"Medium","h":17.6,"sat":53.5,"lum":44.7},{"s":532,"n":"4087","st":28,"rw":20,"hex":"#9b5348","rgb":[155,83,72],"fam":"Red","tone":"Medium","h":8.2,"sat":46.8,"lum":43.4},{"s":128,"n":"3158","st":28,"rw":21,"hex":"#71443b","rgb":[113,68,59],"fam":"Red","tone":"Dark","h":9.8,"sat":41.9,"lum":34.3},{"s":658,"n":"4442","st":28,"rw":22,"hex":"#643f2e","rgb":[100,63,46],"fam":"Brown","tone":"Dark","h":19.2,"sat":47.6,"lum":31.1},{"s":549,"n":"4134","st":28,"rw":23,"hex":"#5b3934","rgb":[91,57,52],"fam":"Red","tone":"Dark","h":8.3,"sat":37.5,"lum":28.9},{"s":226,"n":"3358","st":28,"rw":24,"hex":"#67463f","rgb":[103,70,63],"fam":"Red","tone":"Dark","h":10.0,"sat":33.6,"lum":33.4},{"s":53,"n":"3058","st":29,"rw":1,"hex":"#5a3f3e","rgb":[90,63,62],"fam":"Brown","tone":"Dark","h":2.3,"sat":27.4,"lum":30.3},{"s":294,"n":"3441","st":29,"rw":2,"hex":"#56383d","rgb":[86,56,61],"fam":"Brown","tone":"Dark","h":349.3,"sat":30.8,"lum":28.2},{"s":117,"n":"3145","st":29,"rw":3,"hex":"#5b433e","rgb":[91,67,62],"fam":"Brown","tone":"Dark","h":11.1,"sat":28.1,"lum":31.4},{"s":457,"n":"3871","st":29,"rw":4,"hex":"#513d3b","rgb":[81,61,59],"fam":"Brown","tone":"Dark","h":5.7,"sat":24.1,"lum":28.8},{"s":473,"n":"3906","st":29,"rw":5,"hex":"#4e433c","rgb":[78,67,60],"fam":"Brown","tone":"Dark","h":21.2,"sat":20.2,"lum":29.6},{"s":105,"n":"3129","st":29,"rw":6,"hex":"#483b39","rgb":[72,59,57],"fam":"Brown","tone":"Dark","h":8.6,"sat":17.9,"lum":27.2},{"s":550,"n":"4135","st":29,"rw":7,"hex":"#564340","rgb":[86,67,64],"fam":"Brown","tone":"Dark","h":9.0,"sat":22.0,"lum":30.9},{"s":271,"n":"3416","st":29,"rw":8,"hex":"#473f3f","rgb":[71,63,63],"fam":"Grey","tone":"Dark","h":6.7,"sat":11.7,"lum":28.0},{"s":446,"n":"3833","st":29,"rw":9,"hex":"#493a39","rgb":[73,58,57],"fam":"Brown","tone":"Dark","h":4.0,"sat":19.0,"lum":27.1},{"s":388,"n":"3717","st":29,"rw":10,"hex":"#4a363c","rgb":[74,54,60],"fam":"Purple","tone":"Dark","h":341.1,"sat":23.7,"lum":26.4},{"s":476,"n":"3914","st":29,"rw":11,"hex":"#423537","rgb":[66,53,55],"fam":"Brown","tone":"Dark","h":350.0,"sat":16.7,"lum":25.0},{"s":494,"n":"3941","st":29,"rw":12,"hex":"#3c323b","rgb":[60,50,59],"fam":"Grey","tone":"Dark","h":306.0,"sat":14.9,"lum":23.9},{"s":704,"n":"4582","st":29,"rw":13,"hex":"#3a393e","rgb":[58,57,62],"fam":"Grey","tone":"Dark","h":250.0,"sat":8.7,"lum":25.1},{"s":492,"n":"3938","st":29,"rw":14,"hex":"#453a44","rgb":[69,58,68],"fam":"Grey","tone":"Dark","h":306.0,"sat":13.3,"lum":27.1},{"s":372,"n":"3665","st":29,"rw":15,"hex":"#c1bab0","rgb":[193,186,176],"fam":"Grey","tone":"Light","h":35.3,"sat":8.9,"lum":72.9},{"s":580,"n":"4214","st":29,"rw":16,"hex":"#aeaa96","rgb":[174,170,150],"fam":"Grey","tone":"Light","h":51.4,"sat":12.1,"lum":66.6},{"s":577,"n":"4211","st":29,"rw":17,"hex":"#b8ae9b","rgb":[184,174,155],"fam":"Gold","tone":"Light","h":39.2,"sat":14.1,"lum":68.9},{"s":112,"n":"3138","st":29,"rw":18,"hex":"#b3b09f","rgb":[179,176,159],"fam":"Grey","tone":"Light","h":51.0,"sat":11.2,"lum":68.6},{"s":293,"n":"3440","st":29,"rw":19,"hex":"#a69d8a","rgb":[166,157,138],"fam":"Gold","tone":"Medium","h":40.8,"sat":15.0,"lum":62.5},{"s":263,"n":"3407","st":29,"rw":20,"hex":"#b4ac8c","rgb":[180,172,140],"fam":"Gold","tone":"Light","h":48.0,"sat":19.4,"lum":67.4},{"s":217,"n":"3338","st":29,"rw":21,"hex":"#9b8c5c","rgb":[155,140,92],"fam":"Gold","tone":"Medium","h":45.8,"sat":35.3,"lum":55.7},{"s":55,"n":"3060","st":29,"rw":22,"hex":"#938a75","rgb":[147,138,117],"fam":"Gold","tone":"Medium","h":42.2,"sat":18.1,"lum":55.4},{"s":110,"n":"3136","st":29,"rw":23,"hex":"#948b76","rgb":[148,139,118],"fam":"Gold","tone":"Medium","h":42.2,"sat":18.0,"lum":55.8},{"s":530,"n":"4084","st":29,"rw":24,"hex":"#756b52","rgb":[117,107,82],"fam":"Brown","tone":"Medium","h":43.1,"sat":26.4,"lum":43.9},{"s":589,"n":"4234","st":30,"rw":1,"hex":"#8e7e73","rgb":[142,126,115],"fam":"Brown","tone":"Medium","h":25.0,"sat":16.7,"lum":52.2},{"s":104,"n":"3128","st":30,"rw":2,"hex":"#826d62","rgb":[130,109,98],"fam":"Brown","tone":"Medium","h":20.7,"sat":21.8,"lum":46.5},{"s":116,"n":"3144","st":30,"rw":3,"hex":"#52483e","rgb":[82,72,62],"fam":"Brown","tone":"Dark","h":28.4,"sat":21.6,"lum":31.4},{"s":52,"n":"3057","st":30,"rw":4,"hex":"#5d4439","rgb":[93,68,57],"fam":"Brown","tone":"Dark","h":18.2,"sat":33.7,"lum":31.7},{"s":528,"n":"4082","st":30,"rw":5,"hex":"#716044","rgb":[113,96,68],"fam":"Brown","tone":"Medium","h":36.6,"sat":35.0,"lum":40.4},{"s":641,"n":"4384","st":30,"rw":6,"hex":"#635039","rgb":[99,80,57],"fam":"Brown","tone":"Dark","h":32.3,"sat":37.5,"lum":34.9},{"s":569,"n":"4196","st":30,"rw":7,"hex":"#70502e","rgb":[112,80,46],"fam":"Brown","tone":"Medium","h":31.0,"sat":51.7,"lum":36.1},{"s":219,"n":"3341","st":30,"rw":8,"hex":"#6b3d36","rgb":[107,61,54],"fam":"Red","tone":"Dark","h":7.5,"sat":43.2,"lum":31.7},{"s":599,"n":"4274","st":30,"rw":9,"hex":"#b58775","rgb":[181,135,117],"fam":"Brown","tone":"Medium","h":17.1,"sat":30.9,"lum":59.3},{"s":548,"n":"4133","st":30,"rw":10,"hex":"#ae7665","rgb":[174,118,101],"fam":"Brown","tone":"Medium","h":14.1,"sat":36.8,"lum":54.1},{"s":578,"n":"4212","st":30,"rw":11,"hex":"#a1826e","rgb":[161,130,110],"fam":"Brown","tone":"Medium","h":24.0,"sat":27.8,"lum":55.3},{"s":649,"n":"4416","st":30,"rw":12,"hex":"#a28e87","rgb":[162,142,135],"fam":"Brown","tone":"Medium","h":15.0,"sat":14.7,"lum":58.7},{"s":295,"n":"3442","st":30,"rw":13,"hex":"#8f767a","rgb":[143,118,122],"fam":"Red","tone":"Medium","h":351.8,"sat":15.2,"lum":50.9},{"s":468,"n":"3887","st":30,"rw":14,"hex":"#756a6d","rgb":[117,106,109],"fam":"Grey","tone":"Medium","h":345.0,"sat":9.9,"lum":44.3},{"s":346,"n":"3566","st":30,"rw":15,"hex":"#6a5d64","rgb":[106,93,100],"fam":"Grey","tone":"Medium","h":327.7,"sat":11.8,"lum":39.9},{"s":49,"n":"3054","st":30,"rw":16,"hex":"#9f7270","rgb":[159,114,112],"fam":"Red","tone":"Medium","h":1.5,"sat":25.6,"lum":51.7},{"s":656,"n":"4438","st":30,"rw":17,"hex":"#7a5540","rgb":[122,85,64],"fam":"Brown","tone":"Medium","h":21.9,"sat":41.6,"lum":39.1},{"s":540,"n":"4110","st":30,"rw":18,"hex":"#6d4937","rgb":[109,73,55],"fam":"Brown","tone":"Dark","h":19.6,"sat":43.4,"lum":34.5},{"s":582,"n":"4219","st":30,"rw":19,"hex":"#7d4e42","rgb":[125,78,66],"fam":"Red","tone":"Medium","h":12.5,"sat":41.4,"lum":38.2},{"s":215,"n":"3336","st":30,"rw":20,"hex":"#624239","rgb":[98,66,57],"fam":"Red","tone":"Dark","h":12.6,"sat":36.9,"lum":31.8},{"s":584,"n":"4222","st":30,"rw":21,"hex":"#744f45","rgb":[116,79,69],"fam":"Red","tone":"Medium","h":12.6,"sat":35.8,"lum":37.3},{"s":335,"n":"3532","st":30,"rw":22,"hex":"#693b42","rgb":[105,59,66],"fam":"Red","tone":"Dark","h":350.0,"sat":38.5,"lum":31.5},{"s":3,"n":"3000","st":30,"rw":23,"hex":"#1f262b","rgb":[31,38,43],"fam":"Black","tone":"Dark","h":203.1,"sat":25.5,"lum":17.3}];
+
+const STORAGE_KEY = 'subhani_shade_edits_v1';
+let userEdits = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+let shades = [];
+let activeFamily = 'ALL';
+let aiMode = 'Light';
+let currentEditNum = null;
+
+const FAMILIES = [
+  { name: 'ALL', color: 'linear-gradient(135deg,#ef4444,#eab308,#22c55e,#3b82f6)' },
+  { name: 'White', color: '#f1f5f9' },
+  { name: 'Cream', color: '#eadbc8' },
+  { name: 'Yellow', color: '#eab308' },
+  { name: 'Gold', color: '#ca8a04' },
+  { name: 'Orange', color: '#ea580c' },
+  { name: 'Red', color: '#dc2626' },
+  { name: 'Pink', color: '#ec4899' },
+  { name: 'Purple', color: '#9333ea' },
+  { name: 'Blue', color: '#2563eb' },
+  { name: 'Teal', color: '#0d9488' },
+  { name: 'Green', color: '#16a34a' },
+  { name: 'Brown', color: '#78350f' },
+  { name: 'Grey', color: '#64748b' },
+  { name: 'Black', color: '#111827' }
+];
+
+function rebuildShades() {
+  shades = RAW_SHADES.map(item => {
+    const ed = userEdits[item.n];
+    if (ed) {
+      return { ...item, hex: ed.hex, fam: ed.fam, tone: ed.tone, edited: true };
+    }
+    return { ...item, edited: false };
+  });
+}
+
+function initUI() {
+  rebuildShades();
+  // Populate Strip filter
+  const stripSel = document.getElementById('stripFilter');
+  for (let i = 1; i <= 30; i++) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = `Strip ${i}`;
+    stripSel.appendChild(opt);
+  }
+  // Populate Color Pills
+  const pillsDiv = document.getElementById('colorPills');
+  FAMILIES.forEach(f => {
+    const btn = document.createElement('button');
+    btn.className = 'pill' + (f.name === 'ALL' ? ' active' : '');
+    btn.innerHTML = `<span class="dot" style="background:${f.color}"></span>${f.name === 'ALL' ? 'All Colors (719)' : f.name}`;
+    btn.onclick = () => {
+      activeFamily = f.name;
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      renderGrid();
+    };
+    pillsDiv.appendChild(btn);
+  });
+  renderGrid();
+  updateBasePreview();
+}
+
+function handleSearch() {
+  const val = document.getElementById('searchInput').value.trim();
+  document.getElementById('clearSearchBtn').style.display = val ? 'block' : 'none';
+  renderGrid();
+}
+
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('clearSearchBtn').style.display = 'none';
+  renderGrid();
+}
+
+function renderGrid() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const tone = document.getElementById('toneFilter').value;
+  const strip = document.getElementById('stripFilter').value;
+
+  let filtered = shades.filter(item => {
+    if (activeFamily !== 'ALL' && item.fam.toLowerCase() !== activeFamily.toLowerCase()) return false;
+    if (tone !== 'ALL' && item.tone !== tone) return false;
+    if (strip !== 'ALL' && String(item.st) !== strip) return false;
+    if (!q) return true;
+    // Direct number match or color name / tone match
+    const matchNum = item.n.toLowerCase().includes(q);
+    const matchFam = item.fam.toLowerCase().includes(q);
+    const matchTone = item.tone.toLowerCase().includes(q);
+    const matchStrip = (`strip ${item.st}`).includes(q);
+    return matchNum || matchFam || matchTone || matchStrip;
+  });
+
+  // If searching an exact shade number, put exact match first!
+  if (q && /^\d+$/.test(q)) {
+    filtered.sort((a, b) => {
+      if (a.n === q) return -1;
+      if (b.n === q) return 1;
+      return a.st - b.st || a.rw - b.rw;
+    });
+  }
+
+  document.getElementById('resultCount').textContent = `Showing ${filtered.length} shade${filtered.length === 1 ? '' : 's'}`;
+  const hasFilter = (activeFamily !== 'ALL' || tone !== 'ALL' || strip !== 'ALL');
+  const badge = document.getElementById('activeFilterBadge');
+  if (badge) badge.style.display = hasFilter ? 'inline-block' : 'none';
+
+  const grid = document.getElementById('shadeGrid');
+  grid.innerHTML = filtered.map(item => `
+    <div class="card">
+      <div class="thread-swatch" style="background-color:${item.hex}" onclick="openEditModal('${item.n}')" title="Click to edit shade #${item.n}">
+        ${item.edited ? '<span class="edited-tag">EDITED</span>' : ''}
+        <button class="edit-icon-btn" onclick="event.stopPropagation(); openEditModal('${item.n}')">✎ Edit</button>
+      </div>
+      <div class="card-body">
+        <div class="shade-top">
+          <span class="shade-num">#${item.n}</span>
+          <span class="shade-tone">${item.tone}</span>
+        </div>
+        <div class="shade-fam">${item.fam}</div>
+        <div class="shade-loc">
+          <span>Strip <strong>${item.st}</strong></span>
+          <span>Row <strong>${item.rw}</strong></span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// --- SHADE EDITOR ---
+function openEditModal(shadeNum) {
+  const item = shades.find(x => x.n === shadeNum);
+  if (!item) return;
+  currentEditNum = shadeNum;
+  document.getElementById('editShadeLabel').textContent = `#${item.n} (Strip ${item.st}, Row ${item.rw})`;
+  document.getElementById('editColorPicker').value = item.hex;
+  document.getElementById('editHexText').value = item.hex;
+  document.getElementById('editFamSelect').value = item.fam;
+  document.getElementById('editToneSelect').value = item.tone;
+  document.getElementById('editModal').classList.add('open');
+}
+
+function saveShadeEdit() {
+  if (!currentEditNum) return;
+  const hex = document.getElementById('editColorPicker').value;
+  const fam = document.getElementById('editFamSelect').value;
+  const tone = document.getElementById('editToneSelect').value;
+  userEdits[currentEditNum] = { hex, fam, tone };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(userEdits));
+  rebuildShades();
+  renderGrid();
+  closeModal('editModal');
+}
+
+function resetSingleShade() {
+  if (!currentEditNum) return;
+  delete userEdits[currentEditNum];
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(userEdits));
+  rebuildShades();
+  renderGrid();
+  closeModal('editModal');
+}
+
+function exportEdits() {
+  const blob = new Blob([JSON.stringify(userEdits, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'subhani_shade_edits_backup.json';
+  a.click();
+}
+
+function importEdits(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const parsed = JSON.parse(ev.target.result);
+      userEdits = { ...userEdits, ...parsed };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(userEdits));
+      rebuildShades();
+      renderGrid();
+      alert('Saved shade edits restored successfully!');
+    } catch (err) {
+      alert('Invalid backup JSON file.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// --- AI CONTRAST STUDIO ---
+
+function openToolsModal() {
+  document.getElementById('toolsModal').classList.add('open');
+}
+
+function resetAllFilters() {
+  activeFamily = 'ALL';
+  document.getElementById('toneFilter').value = 'ALL';
+  document.getElementById('stripFilter').value = 'ALL';
+  document.querySelectorAll('.pill').forEach((p, idx) => p.classList.toggle('active', idx === 0));
+  renderGrid();
+}
+
+function openContrastModal() {
+  document.getElementById('contrastModal').classList.add('open');
+  generateContrastSuggestions();
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function setAiMode(mode, btn) {
+  aiMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  generateContrastSuggestions();
+}
+
+function resolveBaseShade() {
+  const raw = document.getElementById('aiBaseInput').value.trim().toLowerCase();
+  if (!raw) return shades.find(x => x.n === '3001') || shades[0];
+  // Exact shade number
+  const exact = shades.find(x => x.n.toLowerCase() === raw);
+  if (exact) return exact;
+  // Partial number
+  const numMatch = shades.find(x => x.n.includes(raw));
+  if (numMatch) return numMatch;
+  // Color name match respecting selected aiMode tone if possible
+  const famMatches = shades.filter(x => x.fam.toLowerCase().includes(raw));
+  if (famMatches.length) {
+    return famMatches.find(x => x.tone === aiMode) || famMatches[0];
+  }
+  return shades[0];
+}
+
+function updateBasePreview() {
+  const base = resolveBaseShade();
+  document.getElementById('baseCircle').style.background = base.hex;
+  document.getElementById('baseTitle').textContent = `Base Thread: #${base.n} (${base.fam} • ${base.tone})`;
+  document.getElementById('baseSub').textContent = `Strip ${base.st} • Row ${base.rw} — Ready for AI Contrast Matching`;
+}
+
+function hexToHsl(hex) {
+  let r = parseInt(hex.slice(1,3),16)/255, g = parseInt(hex.slice(3,5),16)/255, b = parseInt(hex.slice(5,7),16)/255;
+  let max = Math.max(r,g,b), min = Math.min(r,g,b), h, s, l = (max+min)/2;
+  if (max === min) { h = s = 0; }
+  else {
+    let d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch(max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h *= 60;
+  }
+  return { h, s: s*100, l: l*100 };
+}
+
+function pickBestShade(targetHue, targetTone, excludeNums, preferredFam = null, variantOffset = 0) {
+  let pool = shades.filter(x => !excludeNums.has(x.n));
+  if (preferredFam) {
+    const famPool = pool.filter(x => x.fam.toLowerCase().includes(preferredFam.toLowerCase()));
+    if (famPool.length) pool = famPool;
+  }
+  // Score each candidate by hue proximity + tone match + saturation richness
+  const scored = pool.map(item => {
+    const hsl = hexToHsl(item.hex);
+    let hueDiff = Math.abs(hsl.h - targetHue);
+    if (hueDiff > 180) hueDiff = 360 - hueDiff;
+    let toneBonus = (item.tone === targetTone) ? 0 : 38;
+    // Prefer rich embroidery contrast over dull grey unless requested
+    let satPenalty = (!preferredFam && (item.fam === 'Grey' || item.fam === 'White')) ? 45 : 0;
+    let score = hueDiff + toneBonus + satPenalty - (hsl.s * 0.15);
+    return { item, score };
+  });
+  scored.sort((a, b) => a.score - b.score);
+  const pick = scored[Math.min(variantOffset, scored.length - 1)].item;
+  excludeNums.add(pick.n);
+  return pick;
+}
+
+function generateContrastSuggestions() {
+  updateBasePreview();
+  const base = resolveBaseShade();
+  const count = parseInt(document.getElementById('aiCountSelect').value, 10);
+  const prefRaw = document.getElementById('aiPrefColors').value.trim();
+  const prefList = prefRaw ? prefRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const baseHsl = hexToHsl(base.hex);
+
+  // Build 3 curated embroidery contrast sets:
+  // Set 1: Royal / Classic Embroidery Harmony
+  // Set 2: High-Contrast Festive / Boutique Pop
+  // Set 3: Elegant Multi-Shade Gradient / Luxury Contrast
+  const schemes = [
+    {
+      title: `Option 1: Classic Embroidery Contrast (${aiMode} Theme)`,
+      angles: [180, 42, 135, 315, 220]
+    },
+    {
+      title: `Option 2: Royal Boutique Multi-Color (${aiMode} Theme)`,
+      angles: [150, 210, 35, 330, 95]
+    },
+    {
+      title: `Option 3: Complementary Luxury Accent (${aiMode} Theme)`,
+      angles: [120, 240, 50, 300, 175]
+    }
+  ];
+
+  const html = schemes.map((sc, sIdx) => {
+    const used = new Set([base.n]);
+    const picked = [base];
+    for (let i = 0; i < count - 1; i++) {
+      const prefFam = prefList[i] || null;
+      const targetHue = (baseHsl.h + sc.angles[i % sc.angles.length] + sIdx * 17) % 360;
+      const nextShade = pickBestShade(targetHue, aiMode, used, prefFam, sIdx);
+      picked.push(nextShade);
+    }
+    return `
+      <div class="palette-box">
+        <div class="palette-title">
+          <span>${sc.title}</span>
+          <span>${picked.length} Threads</span>
+        </div>
+        <div class="palette-strip">
+          ${picked.map((p, idx) => `
+            <div class="p-item">
+              <div class="p-color" style="background-color:${p.hex}"></div>
+              <div class="p-info">
+                <strong>#${p.n}</strong>
+                <div>${p.fam} (${p.tone})</div>
+                <span>${idx === 0 ? 'BASE • ' : ''}S${p.st} R${p.rw}</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('aiResultsArea').innerHTML = html;
+}
+
+initUI();
+</script>
+</body>
+</html>
